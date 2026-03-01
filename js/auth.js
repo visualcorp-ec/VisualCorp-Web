@@ -113,6 +113,7 @@ const Auth = (function () {
                     </button>
                     <div class="nav__user-dropdown" id="userDropdown">
                         ${isStaff() ? `<a href="${prefix}admin/index.html" class="nav__dropdown-item">🛠️ Panel Admin</a>` : ''}
+                        <a href="${prefix}perfil.html" class="nav__dropdown-item">👤 Mi Perfil</a>
                         <a href="${prefix}mis_pedidos.html" class="nav__dropdown-item">📦 Mis Pedidos</a>
                         <a href="${prefix}carrito.html" class="nav__dropdown-item">🛒 Mi Carrito</a>
                         <button class="nav__dropdown-item nav__logout-btn" id="navLogoutBtn">🚪 Cerrar Sesión</button>
