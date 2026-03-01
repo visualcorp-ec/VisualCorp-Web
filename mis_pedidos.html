@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Corp | Mis Pedidos</title>
+    <link rel="icon" href="https://d1so26dimrz1o2.cloudfront.net/postgrado_files/unemi_ec/logo.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+    <!-- Nav (inyectado) -->
+    <div id="nav-placeholder"></div>
+
+    <section class="auth-section">
+        <div class="auth-container" style="max-width: 800px;">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>📦 Mis Pedidos</h2>
+                    <p>Rastrea el progreso de tus órdenes.</p>
+                </div>
+
+                <div id="ordersList" style="margin-top: var(--sp-6);">
+                    <div style="text-align:center; padding:var(--sp-8); color:var(--color-text-dim);">
+                        <i class="fa-solid fa-spinner fa-spin fa-3x"></i>
+                        <p style="margin-top:var(--sp-4);">Cargando tus pedidos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container text-center">
+            <p>&copy; 2026 VisualCorp. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/carrito.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/mis_pedidos.js"></script>
+</body>
+
+</html>
