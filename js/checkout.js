@@ -395,6 +395,7 @@
         const telefono = document.getElementById('checkPhone').value.trim();
         const email = document.getElementById('checkEmail').value.trim();
         const notas = document.getElementById('checkNotes').value.trim();
+        const direccion = document.getElementById('checkAddress')?.value.trim() || '';
         const total = getFinalTotal();
 
         // 1. Upload files to Supabase Storage
@@ -468,7 +469,8 @@
                 subtotal: total,
                 iva: 0,
                 total: total,
-                notas: notas
+                notas: notas,
+                direccion: direccion || null
             };
 
             if (isLoggedIn) orderData.cliente_id = Auth.getUser().id;

@@ -31,21 +31,34 @@
 
   <div id="nav-container"></div>
 
-  <!-- ===== HERO ===== -->
-  <section class="hero hero--home">
-    <div class="container">
-      <span class="hero__tag fade-in">🔊 18 Años de Experiencia</span>
-      <h1 class="hero__title fade-in fade-in-delay-1">
-        Diseño e impresión que<br>hacen <span class="accent">ruido</span>
-      </h1>
-      <p class="hero__sub fade-in fade-in-delay-2">
-        Creamos letreros, neones, gigantografías, souvenirs y mucho más.<br>
-        Conoce nuestras promos y cotiza al instante.
-      </p>
+  <!-- ===== HERO CAROUSEL ===== -->
+  <section class="hero hero--home" style="position:relative; overflow:hidden; min-height:420px;">
+    <!-- Dynamic slides container -->
+    <div id="heroCarousel" style="position:absolute; inset:0; z-index:0;">
+      <!-- Slides injected by JS -->
+    </div>
+    <!-- Fallback / overlay content -->
+    <div class="container" style="position:relative; z-index:2;">
+      <div id="heroDefault">
+        <span class="hero__tag fade-in">🔊 18 Años de Experiencia</span>
+        <h1 class="hero__title fade-in fade-in-delay-1">
+          Diseño e impresión que<br>hacen <span class="accent">ruido</span>
+        </h1>
+        <p class="hero__sub fade-in fade-in-delay-2">
+          Creamos letreros, neones, gigantografías, souvenirs y mucho más.<br>
+          Conoce nuestras promos y cotiza al instante.
+        </p>
+      </div>
+      <div id="heroSlideContent" style="display:none;">
+        <h1 class="hero__title fade-in" id="heroSlideTitle"></h1>
+        <p class="hero__sub fade-in" id="heroSlideSubtitle"></p>
+      </div>
       <div class="hero__actions fade-in fade-in-delay-3">
         <a href="calculadora.html" class="btn btn--primary btn--lg">📏 Calculadora</a>
         <a href="contacto.html" class="btn btn--secondary btn--lg">📞 Contáctanos</a>
       </div>
+      <!-- Carousel dots -->
+      <div id="heroDots" style="display:none; justify-content:center; gap:8px; margin-top:var(--sp-4);"></div>
     </div>
   </section>
 
@@ -138,6 +151,32 @@
     </div>
   </section>
 
+  <!-- ===== PRÓXIMAS FECHAS FESTIVAS ===== -->
+  <section id="festiveDatesSection" style="padding:var(--sp-12) 0; display:none;">
+    <div class="container">
+      <div class="section-header" style="padding-top:0">
+        <h2 style="font-size:var(--fs-2xl); color:var(--color-heading);">🎉 Próximas <span class="accent">Fechas</span>
+        </h2>
+        <p>Aprovecha descuentos y promociones en estas fechas especiales.</p>
+      </div>
+      <div id="festiveDatesList"
+        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:var(--sp-4);"></div>
+    </div>
+  </section>
+
+  <!-- ===== PRODUCTOS POPULARES ===== -->
+  <section id="popularProductsSection" style="padding:var(--sp-12) 0; background:var(--color-bg-alt); display:none;">
+    <div class="container">
+      <div class="section-header" style="padding-top:0">
+        <h2 style="font-size:var(--fs-2xl); color:var(--color-heading);">🏆 Los Más <span class="accent">Vendidos</span>
+        </h2>
+        <p>Productos que nuestros clientes aman. ¡No te los pierdas!</p>
+      </div>
+      <div id="popularProductsList"
+        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:var(--sp-6);"></div>
+    </div>
+  </section>
+
   <!-- ===== CTA FINAL ===== -->
   <section class="cta-section">
     <div class="container" style="text-align:center; padding:var(--sp-16) 0;">
@@ -159,7 +198,8 @@
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <p>&copy; 2026 <strong>VisualCorp</strong>. Todos los derechos reservados. Milagro, Ecuador.</p>
+      <p>&copy; 2026 <strong>VisualCorp</strong>. Todos los derechos reservados. Milagro, Ecuador. | <a
+          href="politicas.html" style="color:var(--color-accent);">Políticas</a></p>
     </div>
   </footer>
 
@@ -168,6 +208,7 @@
   <script src="js/carrito.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/menu.js"></script>
+  <script src="js/inicio.js"></script>
 </body>
 
 </html>
