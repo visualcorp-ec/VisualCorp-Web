@@ -27,12 +27,15 @@
             <div class="container">
 
                 <!-- Tabs -->
-                <div class="auth-tabs" style="max-width:400px; margin-bottom:var(--sp-8);">
+                <div class="auth-tabs" style="max-width:600px; margin-bottom:var(--sp-8);">
                     <button class="auth-tab active" data-panel="users" id="tabUsers">
                         <i class="fa-solid fa-users"></i> Usuarios
                     </button>
                     <button class="auth-tab" data-panel="orders" id="tabOrders">
                         <i class="fa-solid fa-receipt"></i> Pedidos
+                    </button>
+                    <button class="auth-tab" data-panel="products" id="tabProducts">
+                        <i class="fa-solid fa-boxes-stacked"></i> Productos
                     </button>
                 </div>
 
@@ -100,6 +103,37 @@
                             <tbody id="ordersBody">
                                 <tr>
                                     <td colspan="6" style="text-align:center;">Cargando pedidos...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Panel: Productos -->
+                <div id="panelProducts" style="display:none;">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-6); flex-wrap:wrap; gap:var(--sp-3);">
+                        <h2 style="margin:0; color:var(--color-heading);">Catálogo de Productos</h2>
+                        <button class="btn btn--primary" id="btnAddProduct">
+                            <i class="fa-solid fa-plus"></i> Nuevo Producto
+                        </button>
+                    </div>
+                    <div class="calculator fade-in" style="max-width:none; overflow-x:auto;">
+                        <table class="admin-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Nombre</th>
+                                    <th>Categoría</th>
+                                    <th>Código</th>
+                                    <th>Precio PVP</th>
+                                    <th>Activo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsBody">
+                                <tr>
+                                    <td colspan="7" style="text-align:center;">Cargando productos...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -195,6 +229,61 @@
         </div>
     </div>
 
+    <!-- Modal: Crear/Editar Producto -->
+    <div id="productModal" class="modal-overlay" style="display:none;">
+        <div class="auth-card" style="max-width:600px; width:100%; max-height:90vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-4);">
+                <h3 style="margin:0; color:var(--color-heading);" id="productModalTitle">Nuevo Producto</h3>
+                <button id="closeProductModal"
+                    style="background:none; border:none; color:var(--color-text-dim); cursor:pointer; font-size:1.5rem;">&times;</button>
+            </div>
+            <form id="productForm" class="auth-form">
+                <div class="form-group">
+                    <label>📦 Nombre del Producto</label>
+                    <input type="text" id="prodNombre" required placeholder="Ej: Taza Blanca con Sublimación">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-3);">
+                    <div class="form-group">
+                        <label>🏷️ Categoría Principal</label>
+                        <select id="prodCategoria" required>
+                            <option value="Souvenirs">Souvenirs</option>
+                            <option value="Impresiones">Impresiones</option>
+                            <option value="Productos Personalizados">Productos Personalizados</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>📂 Subcategoría</label>
+                        <input type="text" id="prodSubcategoria" required placeholder="Ej: Tazas">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-3);">
+                    <div class="form-group">
+                        <label>🔖 Código</label>
+                        <input type="text" id="prodCodigo" required placeholder="Ej: TZ-001">
+                    </div>
+                    <div class="form-group">
+                        <label>💰 Precio PVP ($)</label>
+                        <input type="number" id="prodPrecio" step="0.01" min="0" placeholder="12.00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>📝 Descripción</label>
+                    <textarea id="prodDescripcion" rows="3" placeholder="Descripción breve del producto..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>🖼️ Imagen del Producto</label>
+                    <input type="file" id="prodImagen" accept="image/*">
+                    <div id="prodImagenPreview" style="margin-top:var(--sp-2);"></div>
+                </div>
+                <input type="hidden" id="prodId">
+                <div id="prodError" class="auth-error" style="display:none;"></div>
+                <div id="prodSuccess" class="auth-success" style="display:none;"></div>
+                <button type="submit" class="btn btn--primary" style="width:100%; margin-top:var(--sp-3);"
+                    id="prodSubmitBtn">Guardar Producto</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Access denied -->
     <div id="admin-denied" class="auth-page" style="display:none;">
         <div class="auth-card fade-in" style="text-align:center;">
@@ -212,6 +301,7 @@
     <script src="../js/auth.js"></script>
     <script src="../js/menu.js"></script>
     <script src="js/ordenes.js"></script>
+    <script src="js/productos.js"></script>
     <script>
         const guard = document.getElementById('admin-guard');
         const denied = document.getElementById('admin-denied');
@@ -220,17 +310,16 @@
         const employeeModal = document.getElementById('employeeModal');
 
         // Tab switching
-        document.getElementById('tabUsers').addEventListener('click', () => {
-            document.getElementById('tabUsers').classList.add('active');
-            document.getElementById('tabOrders').classList.remove('active');
-            document.getElementById('panelUsers').style.display = '';
-            document.getElementById('panelOrders').style.display = 'none';
-        });
-        document.getElementById('tabOrders').addEventListener('click', () => {
-            document.getElementById('tabOrders').classList.add('active');
-            document.getElementById('tabUsers').classList.remove('active');
-            document.getElementById('panelOrders').style.display = '';
-            document.getElementById('panelUsers').style.display = 'none';
+        const allTabs = ['Users', 'Orders', 'Products'];
+        allTabs.forEach(tab => {
+            document.getElementById('tab' + tab).addEventListener('click', () => {
+                allTabs.forEach(t => {
+                    document.getElementById('tab' + t).classList.remove('active');
+                    document.getElementById('panel' + t).style.display = 'none';
+                });
+                document.getElementById('tab' + tab).classList.add('active');
+                document.getElementById('panel' + tab).style.display = '';
+            });
         });
 
         // Check access
