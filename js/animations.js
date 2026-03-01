@@ -21,12 +21,25 @@ function initCustomCursor() {
     document.body.appendChild(cursor);
     document.body.appendChild(follower);
 
+    // Initial opacity 0 to prevent top-left spawn jump
+    cursor.style.opacity = '0';
+    follower.style.opacity = '0';
+
     let mouseX = 0, mouseY = 0;
     let cursorX = 0, cursorY = 0;
     let followerX = 0, followerY = 0;
+    let hasMoved = false;
 
     // Fast movement for the dot
     document.addEventListener('mousemove', (e) => {
+        if (!hasMoved) {
+            cursor.style.opacity = '1';
+            follower.style.opacity = '1';
+            followerX = e.clientX;
+            followerY = e.clientY;
+            hasMoved = true;
+        }
+
         mouseX = e.clientX;
         mouseY = e.clientY;
 
