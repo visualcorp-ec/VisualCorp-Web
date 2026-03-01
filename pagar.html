@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisualCorp — Pagar</title>
+    <meta name="description"
+        content="Finaliza tu pedido. Personaliza tus productos, elige tu método de pago y recibe tu orden.">
+    <link rel="icon"
+        href="https://d1so26dimrz1o2.cloudfront.net/uploads/avatars/g32HrUdRExn93slL9Joo4T2nYbEXrN7Pog52QeH8.jpg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <div id="nav-container"></div>
+
+    <section class="section-header">
+        <h1>Finalizar <span class="accent">Pedido</span></h1>
+        <p>Personaliza tus productos y elige tu método de pago.</p>
+    </section>
+
+    <section style="padding:0 0 var(--sp-16);">
+        <div class="container">
+
+            <!-- Step indicators -->
+            <div class="checkout-steps fade-in">
+                <div class="step active" data-step="1"><span class="step-num">1</span> Personalizar</div>
+                <div class="step-line"></div>
+                <div class="step" data-step="2"><span class="step-num">2</span> Datos</div>
+                <div class="step-line"></div>
+                <div class="step" data-step="3"><span class="step-num">3</span> Pagar</div>
+            </div>
+
+            <!-- STEP 1: Personalization -->
+            <div id="step1" class="checkout-section fade-in">
+                <h2 class="checkout-title">📦 Personaliza tus Productos</h2>
+                <p style="color:var(--color-text-dim); margin-bottom:var(--sp-6);">Agrega detalles y sube archivos para
+                    cada producto.</p>
+                <div id="customizeList">
+                    <!-- Rendered dynamically -->
+                </div>
+                <div style="display:flex; gap:var(--sp-3); justify-content:flex-end; margin-top:var(--sp-6);">
+                    <a href="carrito.html" class="btn btn--secondary">← Volver al Carrito</a>
+                    <button class="btn btn--primary btn--lg" id="btnToStep2">Continuar →</button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Client details -->
+            <div id="step2" class="checkout-section" style="display:none;">
+                <h2 class="checkout-title">👤 Tus Datos</h2>
+                <div class="auth-card" style="max-width:100%;">
+                    <div id="loggedInInfo" style="display:none;">
+                        <div class="auth-success" style="margin-bottom:var(--sp-4);">
+                            ✅ Sesión iniciada. Tus datos se completaron automáticamente.
+                        </div>
+                    </div>
+                    <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-4);">
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-user"></i> Nombre completo *</label>
+                            <input type="text" id="checkName" required placeholder="Juan Pérez">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-phone"></i> WhatsApp *</label>
+                            <input type="tel" id="checkPhone" required placeholder="+593 99 123 4567">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-envelope"></i> Email (opcional)</label>
+                        <input type="email" id="checkEmail" placeholder="tu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-note-sticky"></i> Notas adicionales</label>
+                        <textarea id="checkNotes" rows="3"
+                            placeholder="Instrucciones especiales, fecha de entrega, etc."
+                            style="width:100%; background:var(--color-bg-alt); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:var(--sp-3); color:var(--color-text); font-family:inherit; resize:vertical;"></textarea>
+                    </div>
+                </div>
+                <div style="display:flex; gap:var(--sp-3); justify-content:flex-end; margin-top:var(--sp-6);">
+                    <button class="btn btn--secondary" id="btnBackTo1">← Personalizar</button>
+                    <button class="btn btn--primary btn--lg" id="btnToStep3">Ir a Pagar →</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Payment -->
+            <div id="step3" class="checkout-section" style="display:none;">
+                <h2 class="checkout-title">💳 Método de Pago</h2>
+
+                <!-- Order summary -->
+                <div class="calculator fade-in" style="max-width:none; margin-bottom:var(--sp-6);">
+                    <h3 style="color:var(--color-heading); margin-bottom:var(--sp-4);">Resumen del Pedido</h3>
+                    <div id="orderSummary"></div>
+                    <div class="divider-line"></div>
+                    <div class="total-grand"><span>TOTAL</span><span id="orderTotal">$0.00</span></div>
+                </div>
+
+                <!-- Payment methods -->
+                <div class="payment-methods fade-in">
+                    <!-- WhatsApp (always available) -->
+                    <div class="payment-card" data-method="whatsapp">
+                        <div class="payment-card__header">
+                            <i class="fa-brands fa-whatsapp" style="color:#25D366; font-size:1.5rem;"></i>
+                            <div>
+                                <h4>WhatsApp</h4>
+                                <p>Envía tu pedido a un asesor</p>
+                            </div>
+                        </div>
+                        <span class="payment-card__tag">Recomendado</span>
+                    </div>
+
+                    <!-- PayPal -->
+                    <div class="payment-card" data-method="paypal">
+                        <div class="payment-card__header">
+                            <i class="fa-brands fa-paypal" style="color:#003087; font-size:1.5rem;"></i>
+                            <div>
+                                <h4>PayPal</h4>
+                                <p>Pago seguro con tarjeta o cuenta PayPal</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transferencia -->
+                    <div class="payment-card" data-method="transferencia">
+                        <div class="payment-card__header">
+                            <i class="fa-solid fa-building-columns" style="color:#06b6d4; font-size:1.5rem;"></i>
+                            <div>
+                                <h4>Transferencia Bancaria</h4>
+                                <p>Transfiere y sube el comprobante</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- De Una -->
+                    <div class="payment-card" data-method="deuna">
+                        <div class="payment-card__header">
+                            <i class="fa-solid fa-qrcode" style="color:#f2b705; font-size:1.5rem;"></i>
+                            <div>
+                                <h4>De Una (QR)</h4>
+                                <p>Escanea el QR y paga desde la app</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment details (shown when method selected) -->
+                <div id="paymentDetails" style="display:none; margin-top:var(--sp-6);"></div>
+
+                <div style="display:flex; gap:var(--sp-3); justify-content:flex-end; margin-top:var(--sp-6);">
+                    <button class="btn btn--secondary" id="btnBackTo2">← Datos</button>
+                    <button class="btn btn--primary btn--lg" id="btnSubmitOrder" disabled>
+                        <i class="fa-solid fa-paper-plane"></i> Enviar Pedido
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 4: Confirmation -->
+            <div id="step4" class="checkout-section" style="display:none;">
+                <div style="text-align:center; padding:var(--sp-12) 0;">
+                    <div style="font-size:4rem; margin-bottom:var(--sp-4);">🎉</div>
+                    <h2 style="color:var(--color-heading); font-size:var(--fs-2xl); margin-bottom:var(--sp-3);">¡Pedido
+                        Enviado!</h2>
+                    <p style="color:var(--color-text-muted); max-width:500px; margin:0 auto var(--sp-8);"
+                        id="confirmMsg">
+                        Tu orden fue registrada. Un asesor se pondrá en contacto contigo pronto.
+                    </p>
+                    <div class="hero__actions">
+                        <a href="index.html" class="btn btn--primary btn--lg">🏠 Ir al Inicio</a>
+                        <a href="tienda.html" class="btn btn--secondary btn--lg">🛒 Seguir Comprando</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 <strong>VisualCorp</strong>. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/carrito.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/checkout.js"></script>
+</body>
+
+</html>

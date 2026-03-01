@@ -50,6 +50,10 @@
                         <button class="btn btn--secondary" id="btnClear" style="width:100%;">
                             <i class="fa-solid fa-trash"></i> Vaciar carrito
                         </button>
+                        <a href="pagar.html" class="btn btn--primary btn--lg"
+                            style="width:100%; text-align:center; margin-top:var(--sp-4);">
+                            Proceder al Pago <i class="fa-solid fa-arrow-right" style="margin-left:var(--sp-2);"></i>
+                        </a>
                     </div>
                 </aside>
             </div>
@@ -159,11 +163,9 @@
         }
 
         btnClear.addEventListener('click', () => {
-            if (confirm('¿Vaciar el carrito?')) {
-                Carrito.clear();
-                renderCart();
-                Carrito.updateBadge();
-            }
+            Carrito.clear();
+            renderCart();
+            Carrito.updateBadge();
         });
 
         renderCart();
