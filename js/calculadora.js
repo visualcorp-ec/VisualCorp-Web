@@ -11,12 +11,6 @@
   // --- Elementos globales ---
   const ivaEl = document.getElementById('iva');
   const tierSel = document.getElementById('tier');
-  const themeBtn = document.getElementById('themeBtn');
-
-  // --- Tema claro/oscuro ---
-  if (themeBtn) {
-    themeBtn.addEventListener('click', () => document.body.classList.toggle('light'));
-  }
 
   // ========================
   //  PANEL: POR MEDIDAS

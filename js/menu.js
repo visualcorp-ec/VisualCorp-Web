@@ -29,15 +29,21 @@
           ${pages.map(p =>
     `<li><a href="${prefix}${p.href}" class="nav__link${currentPage === p.href && !isSubdir ? ' active' : ''}">${p.label}</a></li>`
   ).join('')}
-          <li>
+          <li style="display:flex; align-items:center; gap:var(--sp-2);">
             <a href="${prefix}carrito.html" class="nav__link nav__cart-link${currentPage === 'carrito.html' && !isSubdir ? ' active' : ''}">
               <i class="fa-solid fa-cart-shopping"></i>
               <span id="cart-badge" class="cart-badge" style="display:none;">0</span>
             </a>
+            <button id="themeToggleDesktop" class="nav__link" style="background:none; border:none; color:inherit; font-size:1.1rem; cursor:pointer; padding:0;" aria-label="Cambiar tema" title="Modo Claro / Oscuro">
+                <i class="fa-solid fa-sun"></i>
+            </button>
           </li>
         </ul>
 
         <div class="nav__right-mobile">
+          <button id="themeToggleMobile" style="background:none; border:none; color:inherit; font-size:1.1rem; cursor:pointer;" aria-label="Cambiar tema">
+            <i class="fa-solid fa-sun"></i>
+          </button>
           <a href="${prefix}carrito.html" class="nav__cart-mobile">
             <i class="fa-solid fa-cart-shopping"></i>
             <span id="cart-badge-mobile" class="cart-badge" style="display:none;">0</span>
@@ -93,4 +99,42 @@
   const floatScript = document.createElement('script');
   floatScript.src = prefix + 'js/float-social.js';
   document.body.appendChild(floatScript);
+
+  // --- Theme Toggle Global ---
+  const savedTheme = localStorage.getItem('visualcorp_theme');
+  const bodyClass = document.body.classList;
+
+  if (savedTheme === 'light') {
+    bodyClass.add('light-mode');
+  }
+
+  function toggleTheme() {
+    if (bodyClass.contains('light-mode')) {
+      bodyClass.remove('light-mode');
+      localStorage.setItem('visualcorp_theme', 'dark');
+    } else {
+      bodyClass.add('light-mode');
+      localStorage.setItem('visualcorp_theme', 'light');
+    }
+    updateThemeIcons();
+  }
+
+  function updateThemeIcons() {
+    const isLight = bodyClass.contains('light-mode');
+    const iconHTML = isLight ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+    const btnDesktop = document.getElementById('themeToggleDesktop');
+    const btnMobile = document.getElementById('themeToggleMobile');
+
+    if (btnDesktop) btnDesktop.innerHTML = iconHTML;
+    if (btnMobile) btnMobile.innerHTML = iconHTML;
+  }
+
+  const toggleBtnD = document.getElementById('themeToggleDesktop');
+  const toggleBtnM = document.getElementById('themeToggleMobile');
+
+  if (toggleBtnD) toggleBtnD.addEventListener('click', toggleTheme);
+  if (toggleBtnM) toggleBtnM.addEventListener('click', toggleTheme);
+
+  // Set initial icon state
+  updateThemeIcons();
 })();
