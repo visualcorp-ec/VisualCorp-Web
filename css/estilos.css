@@ -124,6 +124,96 @@ a:hover {
 }
 
 /* ========================================
+   CUSTOM CURSOR & ANIMATIONS
+   ======================================== */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  label {
+    cursor: none !important;
+  }
+}
+
+.cursor,
+.cursor-follower {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+
+  .cursor,
+  .cursor-follower {
+    display: block;
+  }
+}
+
+.cursor {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-accent);
+  transition: transform 0.2s ease;
+}
+
+.cursor-follower {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(242, 183, 5, 0.5);
+  transition: transform 0.15s ease-out, width 0.2s, height 0.2s, background-color 0.2s;
+  will-change: transform;
+}
+
+.cursor--hover {
+  transform: translate(-50%, -50%) scale(0);
+}
+
+.cursor-follower--hover {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(242, 183, 5, 0.1);
+  border-color: var(--color-accent);
+}
+
+/* Scroll Reveal Classes */
+.reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.reveal--fade {
+  transition: opacity 0.8s ease-out;
+}
+
+.reveal--slide-up {
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal--scale {
+  transform: scale(0.95);
+  transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate(0) scale(1);
+}
+
+/* ========================================
    NAVIGATION
    ======================================== */
 .site-header {

@@ -18,7 +18,7 @@
     <div id="nav-container"></div>
 
     <!-- Hero -->
-    <section class="hero" style="padding:8rem 0 2rem;">
+    <section class="hero reveal reveal--slide-up" style="padding:8rem 0 2rem;">
         <div class="container" style="text-align:center;">
             <span class="hero__tag fade-in">📍 Milagro, Ecuador</span>
             <h1 class="hero__title fade-in fade-in-delay-1" style="font-size:var(--fs-3xl);">
@@ -31,7 +31,7 @@
     </section>
 
     <!-- Accesos Rápidos -->
-    <section style="padding:0 0 var(--sp-12);">
+    <section class="reveal reveal--fade" data-delay="100" style="padding:0 0 var(--sp-12);">
         <div class="container">
             <div class="contact-columns fade-in">
 
@@ -125,7 +125,7 @@
     </section>
 
     <!-- Información de Contacto -->
-    <section style="padding: var(--sp-12) 0; background: var(--color-bg-alt);">
+    <section class="reveal reveal--slide-up" style="padding: var(--sp-12) 0; background: var(--color-bg-alt);">
         <div class="container">
             <div class="calculator fade-in" style="max-width:none;">
                 <h2
@@ -195,7 +195,7 @@
     </section>
 
     <!-- Mapa -->
-    <section style="padding: var(--sp-12) 0;">
+    <section class="reveal reveal--fade" data-delay="100" style="padding: var(--sp-12) 0;">
         <div class="container">
             <div class="calculator fade-in" style="max-width:none; padding:0; overflow:hidden;">
                 <div style="padding:var(--sp-6) var(--sp-8) 0;">
@@ -215,9 +215,10 @@
     </section>
 
     <!-- Footer -->
-    <footer class="site-footer">
+    <footer class="site-footer reveal reveal--fade">
         <div class="container">
-            <p>&copy; 2026 <strong>VisualCorp</strong>. Todos los derechos reservados. Milagro, Ecuador.</p>
+            <p>&copy; 2026 <strong>VisualCorp</strong>. Todos los derechos reservados. Milagro, Ecuador. | <a
+                    href="politicas.html" style="color:var(--color-accent);">Políticas</a></p>
         </div>
     </footer>
 
@@ -226,8 +227,9 @@
     <script src="js/carrito.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/menu.js"></script>
+    <script src="js/animations.js"></script>
     <script>
-        // Estado Abierto/Cerrado
+        // ... (resto del script original para el horario)
         function checkOpenStatus() {
             const now = new Date();
             const day = now.getDay();
