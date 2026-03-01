@@ -4,7 +4,8 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Ensure user is logged in
-    const user = await Auth.getCurrentUser();
+    await Auth.getSession();
+    const user = Auth.getUser();
     if (!user) {
         window.location.href = 'login.html?redirect=mis_pedidos.html';
         return;

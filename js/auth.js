@@ -102,6 +102,9 @@ const Auth = (function () {
 
         if (isLoggedIn()) {
             const name = currentProfile?.nombre || currentUser?.email?.split('@')[0] || 'Usuario';
+            const isSubdir = window.location.pathname.includes('/admin/');
+            const prefix = isSubdir ? '../' : '';
+
             li.innerHTML = `
                 <div class="nav__user-menu">
                     <button class="nav__user-btn" id="userMenuBtn">
@@ -109,10 +112,9 @@ const Auth = (function () {
                         <span class="nav__user-name">${name}</span>
                     </button>
                     <div class="nav__user-dropdown" id="userDropdown">
-                        ${isStaff() ? '<a href="admin/index.html" class="nav__dropdown-item">🛠️ Panel Admin</a>' : ''}
-                        <a href="perfil.html" class="nav__dropdown-item">👤 Mi Perfil</a>
-                        <a href="mis_pedidos.html" class="nav__dropdown-item">📦 Mis Pedidos</a>
-                        <a href="carrito.html" class="nav__dropdown-item">🛒 Mi Carrito</a>
+                        ${isStaff() ? `<a href="${prefix}admin/index.html" class="nav__dropdown-item">🛠️ Panel Admin</a>` : ''}
+                        <a href="${prefix}mis_pedidos.html" class="nav__dropdown-item">📦 Mis Pedidos</a>
+                        <a href="${prefix}carrito.html" class="nav__dropdown-item">🛒 Mi Carrito</a>
                         <button class="nav__dropdown-item nav__logout-btn" id="navLogoutBtn">🚪 Cerrar Sesión</button>
                     </div>
                 </div>`;
