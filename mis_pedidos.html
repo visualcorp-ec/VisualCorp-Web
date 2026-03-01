@@ -12,17 +12,18 @@
 
 <body>
     <!-- Nav (inyectado) -->
-    <div id="nav-placeholder"></div>
+    <div id="nav-container"></div>
 
-    <section class="auth-section">
-        <div class="auth-container" style="max-width: 1000px; width:100%;">
-            <div class="auth-card">
-                <div class="auth-header">
-                    <h2>📦 Mis Pedidos</h2>
-                    <p>Rastrea el progreso de tus órdenes.</p>
+    <main class="site-content" style="padding-top: var(--sp-12); min-height: 80vh;">
+        <div class="container" style="max-width: 1200px; width:100%; margin: 0 auto; padding: 0 var(--sp-4);">
+            <div
+                style="background:var(--color-surface); padding:var(--sp-8); border-radius:var(--radius-lg); border:1px solid var(--color-border); box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                <div style="text-align:center; margin-bottom:var(--sp-8);">
+                    <h2 style="font-size:var(--fs-2xl); margin-bottom:var(--sp-2);">📦 Mis Pedidos</h2>
+                    <p style="color:var(--color-text-dim);">Rastrea el progreso de tus órdenes.</p>
                 </div>
 
-                <div id="ordersList" style="margin-top: var(--sp-6);">
+                <div id="ordersList">
                     <div style="text-align:center; padding:var(--sp-8); color:var(--color-text-dim);">
                         <i class="fa-solid fa-spinner fa-spin fa-3x"></i>
                         <p style="margin-top:var(--sp-4);">Cargando tus pedidos...</p>
@@ -30,7 +31,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </main>
 
     <footer class="site-footer">
         <div class="container text-center">
