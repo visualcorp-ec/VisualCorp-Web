@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisualCorp — Mi Carrito</title>
+    <meta name="description" content="Revisa tus productos, ajusta cantidades y procede al pago.">
+    <link rel="icon"
+        href="https://d1so26dimrz1o2.cloudfront.net/uploads/avatars/g32HrUdRExn93slL9Joo4T2nYbEXrN7Pog52QeH8.jpg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <div id="nav-container"></div>
+
+    <section class="section-header">
+        <h1>Mi <span class="accent">Carrito</span></h1>
+        <p>Revisa tus productos y procede al pago.</p>
+    </section>
+
+    <section style="padding:0 0 var(--sp-16);">
+        <div class="container">
+            <div class="cart-layout">
+
+                <!-- Lista de items -->
+                <div class="cart-items" id="cartItems">
+                    <!-- Se renderiza dinámicamente -->
+                </div>
+
+                <!-- Resumen -->
+                <aside class="cart-summary" id="cartSummary">
+                    <h3 style="margin-bottom:var(--sp-6); font-size:var(--fs-lg); color:var(--color-heading);">Resumen
+                        del Pedido</h3>
+
+                    <div class="kpi"><span class="kpi-label">Productos</span><span class="kpi-val"
+                            id="summaryCount">0</span></div>
+                    <div class="kpi"><span class="kpi-label">Subtotal</span><span class="kpi-val"
+                            id="summarySubtotal">$0.00</span></div>
+                    <div class="divider-line"></div>
+                    <div class="total-grand"><span>TOTAL</span><span id="summaryTotal">$0.00</span></div>
+
+                    <div style="margin-top:var(--sp-6); display:flex; flex-direction:column; gap:var(--sp-3);">
+                        <a href="https://wa.me/593997078212?text=Hola,%20quiero%20hacer%20un%20pedido" target="_blank"
+                            class="btn btn--primary btn--lg" id="btnWhatsApp" style="width:100%;">
+                            <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
+                        </a>
+                        <button class="btn btn--secondary" id="btnClear" style="width:100%;">
+                            <i class="fa-solid fa-trash"></i> Vaciar carrito
+                        </button>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 <strong>VisualCorp</strong>. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/carrito.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/menu.js"></script>
+    <script>
+        const cartItems = document.getElementById('cartItems');
+        const summaryCount = document.getElementById('summaryCount');
+        const summarySubtotal = document.getElementById('summarySubtotal');
+        const summaryTotal = document.getElementById('summaryTotal');
+        const btnClear = document.getElementById('btnClear');
+        const btnWhatsApp = document.getElementById('btnWhatsApp');
+
+        function renderCart() {
+            const items = Carrito.getItems();
+
+            if (items.length === 0) {
+                cartItems.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state__icon">🛒</div>
+            <div class="empty-state__title">Tu carrito está vacío</div>
+            <div class="empty-state__text">Agrega productos desde la <a href="tienda.html">tienda</a>.</div>
+          </div>`;
+                summaryCount.textContent = '0';
+                summarySubtotal.textContent = '$0.00';
+                summaryTotal.textContent = '$0.00';
+                return;
+            }
+
+            cartItems.innerHTML = items.map(item => {
+                const imgSrc = item.imagen || 'https://placehold.co/80x80/1a2035/f2b705?text=📦';
+                const subtotal = (item.precio * item.cantidad).toFixed(2);
+                return `
+          <div class="cart-item" data-id="${item.id}">
+            <img src="${imgSrc}" alt="${item.nombre}" class="cart-item__img">
+            <div class="cart-item__info">
+              <h4 class="cart-item__name">${item.nombre}</h4>
+              <span class="cart-item__sub">${item.subcategoria || ''}</span>
+              <span class="cart-item__price">$${Number(item.precio).toFixed(2)} c/u</span>
+            </div>
+            <div class="cart-item__qty">
+              <button class="qty-btn" data-action="minus" data-id="${item.id}">−</button>
+              <span class="qty-val">${item.cantidad}</span>
+              <button class="qty-btn" data-action="plus" data-id="${item.id}">+</button>
+            </div>
+            <div class="cart-item__total">$${subtotal}</div>
+            <button class="cart-item__remove" data-id="${item.id}" title="Eliminar">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>`;
+            }).join('');
+
+            // Summary
+            const total = Carrito.getTotal();
+            const count = Carrito.getCount();
+            summaryCount.textContent = count;
+            summarySubtotal.textContent = `$${total.toFixed(2)}`;
+            summaryTotal.textContent = `$${total.toFixed(2)}`;
+
+            // WhatsApp link
+            const waText = buildWhatsAppText(items, total);
+            btnWhatsApp.href = `https://wa.me/593997078212?text=${encodeURIComponent(waText)}`;
+
+            // Events
+            cartItems.querySelectorAll('.qty-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    const action = btn.dataset.action;
+                    const item = Carrito.getItems().find(i => i.id === id);
+                    if (!item) return;
+                    const newQty = action === 'plus' ? item.cantidad + 1 : item.cantidad - 1;
+                    if (newQty < 1) { Carrito.removeItem(id); } else { Carrito.updateQuantity(id, newQty); }
+                    renderCart();
+                    Carrito.updateBadge();
+                });
+            });
+
+            cartItems.querySelectorAll('.cart-item__remove').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    Carrito.removeItem(btn.dataset.id);
+                    renderCart();
+                    Carrito.updateBadge();
+                });
+            });
+        }
+
+        function buildWhatsAppText(items, total) {
+            let text = '🛒 *PEDIDO — VisualCorp*\n\n';
+            items.forEach((item, i) => {
+                text += `${i + 1}. ${item.nombre} x${item.cantidad} — $${(item.precio * item.cantidad).toFixed(2)}\n`;
+            });
+            text += `\n💰 *Total: $${total.toFixed(2)}*\n`;
+            text += `\n📝 (Agregar detalles adicionales aquí)`;
+            return text;
+        }
+
+        btnClear.addEventListener('click', () => {
+            if (confirm('¿Vaciar el carrito?')) {
+                Carrito.clear();
+                renderCart();
+                Carrito.updateBadge();
+            }
+        });
+
+        renderCart();
+    </script>
+</body>
+
+</html>

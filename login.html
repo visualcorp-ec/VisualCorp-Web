@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisualCorp — Iniciar Sesión</title>
+    <meta name="description"
+        content="Inicia sesión o regístrate en VisualCorp para personalizar tus pedidos y gestionar tu historial.">
+    <link rel="icon"
+        href="https://d1so26dimrz1o2.cloudfront.net/uploads/avatars/g32HrUdRExn93slL9Joo4T2nYbEXrN7Pog52QeH8.jpg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <div id="nav-container"></div>
+
+    <section class="auth-page">
+        <div class="auth-card fade-in">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <img src="https://d1so26dimrz1o2.cloudfront.net/uploads/avatars/g32HrUdRExn93slL9Joo4T2nYbEXrN7Pog52QeH8.jpg"
+                    alt="VisualCorp">
+                <h2>Visual<span class="accent">Corp</span></h2>
+            </div>
+
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" id="tabLogin">Iniciar Sesión</button>
+                <button class="auth-tab" data-tab="register" id="tabRegister">Registrarse</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail"><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" id="loginEmail" required placeholder="tu@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword"><i class="fa-solid fa-lock"></i> Contraseña</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••"
+                        autocomplete="current-password" minlength="6">
+                </div>
+                <div id="loginError" class="auth-error" style="display:none;"></div>
+                <button type="submit" class="btn btn--primary btn--lg auth-submit" id="loginBtn">
+                    <i class="fa-solid fa-right-to-bracket"></i> Entrar
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" style="display:none;">
+                <div class="form-group">
+                    <label for="regName"><i class="fa-solid fa-user"></i> Nombre completo</label>
+                    <input type="text" id="regName" required placeholder="Juan Pérez" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label for="regPhone"><i class="fa-solid fa-phone"></i> Teléfono (WhatsApp)</label>
+                    <input type="tel" id="regPhone" placeholder="+593 99 123 4567" autocomplete="tel">
+                </div>
+                <div class="form-group">
+                    <label for="regEmail"><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" id="regEmail" required placeholder="tu@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword"><i class="fa-solid fa-lock"></i> Contraseña</label>
+                    <input type="password" id="regPassword" required placeholder="Mínimo 6 caracteres"
+                        autocomplete="new-password" minlength="6">
+                </div>
+                <div id="registerError" class="auth-error" style="display:none;"></div>
+                <div id="registerSuccess" class="auth-success" style="display:none;"></div>
+                <button type="submit" class="btn btn--primary btn--lg auth-submit" id="registerBtn">
+                    <i class="fa-solid fa-user-plus"></i> Crear Cuenta
+                </button>
+            </form>
+
+            <p class="auth-footer-text">
+                <i class="fa-solid fa-shield-halved"></i> Tus datos están protegidos con encriptación de nivel bancario.
+            </p>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/carrito.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/menu.js"></script>
+    <script>
+        const tabLogin = document.getElementById('tabLogin');
+        const tabRegister = document.getElementById('tabRegister');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginError = document.getElementById('loginError');
+        const registerError = document.getElementById('registerError');
+        const registerSuccess = document.getElementById('registerSuccess');
+
+        // Tab switch
+        tabLogin.addEventListener('click', () => {
+            tabLogin.classList.add('active');
+            tabRegister.classList.remove('active');
+            loginForm.style.display = '';
+            registerForm.style.display = 'none';
+        });
+        tabRegister.addEventListener('click', () => {
+            tabRegister.classList.add('active');
+            tabLogin.classList.remove('active');
+            registerForm.style.display = '';
+            loginForm.style.display = 'none';
+        });
+
+        // Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loginError.style.display = 'none';
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Entrando...';
+
+            try {
+                await Auth.login(
+                    document.getElementById('loginEmail').value,
+                    document.getElementById('loginPassword').value
+                );
+                window.location.href = 'index.html';
+            } catch (err) {
+                loginError.textContent = translateError(err.message);
+                loginError.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Entrar';
+            }
+        });
+
+        // Register
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            registerError.style.display = 'none';
+            registerSuccess.style.display = 'none';
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creando cuenta...';
+
+            try {
+                await Auth.register(
+                    document.getElementById('regEmail').value,
+                    document.getElementById('regPassword').value,
+                    document.getElementById('regName').value,
+                    document.getElementById('regPhone').value
+                );
+                registerSuccess.textContent = '✅ Cuenta creada. Revisa tu email para confirmar tu cuenta.';
+                registerSuccess.style.display = 'block';
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Cuenta creada!';
+            } catch (err) {
+                registerError.textContent = translateError(err.message);
+                registerError.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Crear Cuenta';
+            }
+        });
+
+        function translateError(msg) {
+            if (msg.includes('Invalid login')) return 'Email o contraseña incorrectos.';
+            if (msg.includes('already registered')) return 'Este email ya está registrado. Intenta iniciar sesión.';
+            if (msg.includes('Password')) return 'La contraseña debe tener al menos 6 caracteres.';
+            if (msg.includes('Email')) return 'Ingresa un email válido.';
+            return 'Error: ' + msg;
+        }
+
+        // Redirect if already logged in
+        (async () => {
+            const session = await Auth.getSession();
+            if (session) window.location.href = 'index.html';
+        })();
+    </script>
+</body>
+
+</html>

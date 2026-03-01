@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios — VisualCorp</title>
+    <meta name="description"
+        content="Conoce los servicios de VisualCorp: impresión de gran formato, diseño gráfico, personalización de productos y más.">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <!-- Navegación -->
+    <div id="nav-container"></div>
+
+    <!-- Encabezado -->
+    <div class="section-header">
+        <div class="container">
+            <h1 class="fade-in">Nuestros <span
+                    style="background:var(--gradient-brand);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Servicios</span>
+            </h1>
+            <p class="fade-in fade-in-delay-1">Soluciones integrales de impresión, diseño y personalización para tu
+                empresa o evento.</p>
+        </div>
+    </div>
+
+    <!-- Grilla de Servicios -->
+    <div class="container">
+        <div class="services-grid">
+
+            <!-- 1 — Impresión Gran Formato -->
+            <div class="service-card fade-in fade-in-delay-1">
+                <div class="service-card__icon">🖨️</div>
+                <h3 class="service-card__title">Impresión Gran Formato</h3>
+                <p class="service-card__text">
+                    Banners, vinilos, lonas y más en alta resolución. Materiales resistentes para interiores y
+                    exteriores con acabados profesionales.
+                </p>
+            </div>
+
+            <!-- 2 — Diseño Gráfico -->
+            <div class="service-card fade-in fade-in-delay-2">
+                <div class="service-card__icon">🎨</div>
+                <h3 class="service-card__title">Diseño Gráfico</h3>
+                <p class="service-card__text">
+                    Creamos piezas visuales impactantes: logotipos, papelería corporativa, material publicitario y
+                    branding completo para tu marca.
+                </p>
+            </div>
+
+            <!-- 3 — Productos Personalizados -->
+            <div class="service-card fade-in fade-in-delay-3">
+                <div class="service-card__icon">🎁</div>
+                <h3 class="service-card__title">Productos Personalizados</h3>
+                <p class="service-card__text">
+                    Tazas, camisetas, libretas, llaveros y cientos de artículos con tu marca o diseño. Ideales para
+                    eventos, regalos corporativos y merchandising.
+                </p>
+            </div>
+
+            <!-- 4 — Souvenirs -->
+            <div class="service-card fade-in fade-in-delay-4">
+                <div class="service-card__icon">🏷️</div>
+                <h3 class="service-card__title">Souvenirs</h3>
+                <p class="service-card__text">
+                    Recuerdos personalizados para cualquier ocasión: bodas, graduaciones, cumpleaños y eventos
+                    corporativos con diseños únicos.
+                </p>
+            </div>
+
+            <!-- 5 — Señalética -->
+            <div class="service-card fade-in fade-in-delay-1">
+                <div class="service-card__icon">🪧</div>
+                <h3 class="service-card__title">Señalética</h3>
+                <p class="service-card__text">
+                    Señalización interior y exterior: placas, carteles informativos, directorios y señales de seguridad
+                    con materiales duraderos.
+                </p>
+            </div>
+
+            <!-- 6 — Asesoría Integral -->
+            <div class="service-card fade-in fade-in-delay-2">
+                <div class="service-card__icon">💡</div>
+                <h3 class="service-card__title">Asesoría Integral</h3>
+                <p class="service-card__text">
+                    Te acompañamos desde la idea hasta el producto final. Nuestro equipo te asesora en materiales,
+                    formatos y cantidades óptimas.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <section style="padding:3rem 0 5rem;text-align:center;">
+        <div class="container fade-in">
+            <h2 style="font-size:var(--fs-2xl);font-weight:800;color:var(--color-heading);margin-bottom:var(--sp-4);">
+                ¿Listo para comenzar?</h2>
+            <p style="color:var(--color-text-muted);max-width:480px;margin:0 auto var(--sp-8);font-size:var(--fs-md);">
+                Cotiza tus productos ahora mismo o explora nuestro catálogo completo.
+            </p>
+            <a href="calculadora.html" class="btn btn--primary btn--lg">Usar Calculadora</a>
+            <a href="tienda.html" class="btn btn--secondary btn--lg" style="margin-left:.75rem;">Ver Catálogo</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 <strong>VisualCorp</strong>. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/carrito.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/menu.js"></script>
+</body>
+
+</html>

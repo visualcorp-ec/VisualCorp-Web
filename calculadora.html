@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VisualCorp — Calculadora de Precios</title>
+  <meta name="description"
+    content="Calcula el costo de tus impresiones y productos personalizados con VisualCorp. Precios PVP, institucional y corporativo al instante.">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+  <!-- Navegación -->
+  <div id="nav-container"></div>
+
+  <!-- Hero compacto -->
+  <section class="hero" style="padding:8rem 0 2rem;">
+    <div class="container" style="text-align:center;">
+      <span class="hero__tag fade-in">Cotizador en Línea</span>
+      <h1 class="hero__title fade-in fade-in-delay-1" style="font-size:var(--fs-3xl);">
+        Calculadora de <span class="accent">Precios</span>
+      </h1>
+      <p class="hero__sub fade-in fade-in-delay-2" style="margin-bottom:var(--sp-6);">
+        Cotiza impresiones por m² y productos unitarios al instante.
+      </p>
+    </div>
+  </section>
+
+  <!-- Controles globales -->
+  <section style="padding:0 0 var(--sp-6);">
+    <div class="container">
+      <div class="calc-top-controls fade-in">
+        <div class="chip-group">
+          <div class="chip">
+            <label for="iva">IVA (%)</label>
+            <input type="number" id="iva" min="0" step="0.01" value="15" title="IVA en porcentaje">
+          </div>
+          <div class="chip">
+            <label for="tier">Tarifa</label>
+            <select id="tier" title="Elige nivel de precio para productos por m²">
+              <option value="pvp">PVP</option>
+              <option value="instalacion">Con instalación</option>
+              <option value="corporativo">Corporativo</option>
+            </select>
+          </div>
+        </div>
+        <button id="themeBtn" class="btn btn--secondary" type="button" title="Cambiar claro/oscuro">☀️ Modo claro /
+          oscuro</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculadoras: grid de 2 columnas -->
+  <section style="padding:0 0 var(--sp-12);">
+    <div class="container">
+      <div class="calc-grid">
+
+        <!-- ======================== PANEL: POR MEDIDAS ======================== -->
+        <div class="calculator fade-in">
+          <div class="calculator__header">
+            <h2>📏 POR MEDIDAS (Taller)</h2>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="catMed">Categoría</label>
+              <select id="catMed">
+                <option>Cargando...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="itemMed">Material / producto (m²)</label>
+              <select id="itemMed">
+                <option>— Primero elige categoría —</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ancho">Ancho (cm)</label>
+              <input type="number" id="ancho" min="0" step="0.01" placeholder="Ej. 100">
+            </div>
+            <div class="form-group">
+              <label for="alto">Alto (cm)</label>
+              <input type="number" id="alto" min="0" step="0.01" placeholder="Ej. 100">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="precioM2">Precio por m² (USD)</label>
+              <input type="number" id="precioM2" min="0" step="0.01" placeholder="Ej. 7.00">
+            </div>
+            <div class="form-group">
+              <label for="areaM2">Área (m²)</label>
+              <input type="number" id="areaM2" readonly>
+            </div>
+          </div>
+
+          <div class="form-msg">
+            <span class="badge-dot" style="background:var(--color-warning);"></span>
+            <span id="msgMed">Selecciona un material para rellenar el precio automático (editable).</span>
+          </div>
+
+          <div class="divider-line"></div>
+
+          <div class="form-group">
+            <label>🎨 Diseño (elige una opción o ingresa un valor específico)</label>
+            <div class="pill-group" data-scope="med">
+              <button class="pill active" data-add="0" type="button">Sin diseño (+$0)</button>
+              <button class="pill" data-add="3" type="button">Sencillo (+$3)</button>
+              <button class="pill" data-add="5" type="button">Normal (+$5)</button>
+              <button class="pill" data-add="10" type="button">Complejo (+$10)</button>
+              <input class="pill-input" type="number" id="designCustomMed" min="0" step="0.01" placeholder="Otro $">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tipoOjal">🧷 Ojales (opcional)</label>
+              <select id="tipoOjal">
+                <option value="none">Sin ojales</option>
+                <option value="grande">Grande ($0.50 c/u)</option>
+                <option value="pequeno">Pequeño ($0.30 c/u)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cantOjal">Cantidad de ojales</label>
+              <input type="number" id="cantOjal" min="0" step="1" value="0">
+            </div>
+          </div>
+
+          <!-- Resumen -->
+          <div class="total-box">
+            <div class="kpi"><span class="kpi-label">Subtotal Material</span><span class="kpi-val"
+                id="subMaterialMed">$0.00</span></div>
+            <div class="kpi"><span class="kpi-label">Costo Diseño</span><span class="kpi-val"
+                id="costoDisenoMed">$0.00</span></div>
+            <div class="kpi"><span class="kpi-label">Costo Ojales</span><span class="kpi-val"
+                id="costoOjalesMed">$0.00</span></div>
+            <div class="divider-line"></div>
+            <div class="kpi"><span class="kpi-label" style="font-weight:800;">SUBTOTAL (Base)</span><span
+                class="kpi-val" id="subtotalBaseMed" style="font-weight:800;">$0.00</span></div>
+            <div class="kpi"><span class="kpi-label">IVA</span><span class="kpi-val" id="ivaFinalMed">$0.00</span></div>
+            <div class="total-grand"><span>TOTAL</span><span id="granTotalMed">$0.00</span></div>
+          </div>
+        </div>
+
+        <!-- ======================== PANEL: POR PRODUCTO ======================== -->
+        <div class="calculator fade-in fade-in-delay-2">
+          <div class="calculator__header">
+            <h2>🛒 POR PRODUCTO (Souvenirs, etc.)</h2>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="catProd">Categoría</label>
+              <select id="catProd">
+                <option>Cargando...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="itemProd">Producto (unitario)</label>
+              <select id="itemProd">
+                <option>— Primero elige categoría —</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombreProd">Nombre del producto</label>
+              <input type="text" id="nombreProd" placeholder="Ej. Taza personalizada">
+            </div>
+            <div class="form-group">
+              <label for="precioProd">Precio unitario (USD)</label>
+              <input type="number" id="precioProd" min="0" step="0.01" placeholder="Se calcula solo">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cantidadProd">Cantidad</label>
+              <input type="number" id="cantidadProd" min="1" step="1" value="1">
+            </div>
+            <div class="form-group" style="display:flex;align-items:flex-end;">
+              <div class="form-msg">
+                <span class="badge-dot" style="background:var(--color-success);"></span>
+                <span id="msgProd">El precio se ajusta por cantidad.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider-line"></div>
+
+          <div class="form-group">
+            <label>🎨 Diseño (opcional)</label>
+            <div class="pill-group" data-scope="prod">
+              <button class="pill active" data-add="0" type="button">Sin diseño (+$0)</button>
+              <button class="pill" data-add="3" type="button">Sencillo (+$3)</button>
+              <button class="pill" data-add="5" type="button">Normal (+$5)</button>
+              <button class="pill" data-add="10" type="button">Complejo (+$10)</button>
+              <input class="pill-input" type="number" id="designCustomProd" min="0" step="0.01" placeholder="Otro $">
+            </div>
+          </div>
+
+          <!-- Resumen -->
+          <div class="total-box">
+            <div class="kpi"><span class="kpi-label">Subtotal Productos</span><span class="kpi-val"
+                id="subMaterialProd">$0.00</span></div>
+            <div class="kpi"><span class="kpi-label">Costo Diseño</span><span class="kpi-val"
+                id="costoDisenoProd">$0.00</span></div>
+            <div class="divider-line"></div>
+            <div class="kpi"><span class="kpi-label" style="font-weight:800;">SUBTOTAL (Base)</span><span
+                class="kpi-val" id="subtotalBaseProd" style="font-weight:800;">$0.00</span></div>
+            <div class="kpi"><span class="kpi-label">IVA</span><span class="kpi-val" id="ivaFinalProd">$0.00</span>
+            </div>
+            <div class="total-grand"><span>TOTAL</span><span id="granTotalProd">$0.00</span></div>
+          </div>
+        </div>
+
+      </div><!-- /calc-grid -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 <strong>VisualCorp</strong>. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/carrito.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/calculadora.js"></script>
+</body>
+
+</html>
