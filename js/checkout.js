@@ -11,6 +11,8 @@
 
     let selectedMethod = '';
     let customizations = {};
+    let advisors = [];
+    let selectedAdvisorId = 'auto';
 
     // --- Product type config for customization fields ---
     const CUSTOM_FIELDS = {
@@ -150,6 +152,87 @@
             const info = document.getElementById('loggedInInfo');
             if (info) info.style.display = '';
         }
+        loadAdvisors();
+    }
+
+    // --- Load and render advisors ---
+    async function loadAdvisors() {
+        const listEl = document.getElementById('advisorList');
+        if (!listEl) return;
+
+        try {
+            // Get employees
+            const { data: emps } = await supabaseClient
+                .from('perfiles')
+                .select('id, nombre, whatsapp, foto_url, especialidad')
+                .in('rol', ['empleado', 'admin'])
+                .not('whatsapp', 'is', null);
+
+            if (!emps || emps.length === 0) { listEl.innerHTML = ''; return; }
+
+            // Get active order counts per advisor
+            const { data: orders } = await supabaseClient
+                .from('ordenes')
+                .select('asesor_id')
+                .not('estado', 'in', '(entregado,cancelado)');
+
+            const orderCounts = {};
+            (orders || []).forEach(o => {
+                if (o.asesor_id) orderCounts[o.asesor_id] = (orderCounts[o.asesor_id] || 0) + 1;
+            });
+
+            advisors = emps.map(e => ({ ...e, activeOrders: orderCounts[e.id] || 0 }));
+
+            // Render cards
+            let html = `<div class="advisor-card ${selectedAdvisorId === 'auto' ? 'selected' : ''}" data-advisor="auto" style="cursor:pointer; text-align:center; padding:var(--sp-4); background:var(--color-bg-alt); border:2px solid ${selectedAdvisorId === 'auto' ? 'var(--color-accent)' : 'var(--color-border)'}; border-radius:var(--radius-lg); transition:all .2s;">
+                <div style="font-size:2rem; margin-bottom:var(--sp-2);">🤖</div>
+                <div style="font-weight:700; color:var(--color-heading);">Automático</div>
+                <div style="font-size:var(--fs-xs); color:var(--color-text-dim);">Asignar al asesor con menos carga</div>
+            </div>`;
+
+            advisors.forEach(a => {
+                const initial = (a.nombre || '?').charAt(0).toUpperCase();
+                const avatar = a.foto_url
+                    ? `<img src="${a.foto_url}" style="width:50px;height:50px;border-radius:50%;object-fit:cover;">`
+                    : `<div style="width:50px;height:50px;border-radius:50%;background:var(--color-accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:#111;font-size:1.2rem;margin:0 auto;">${initial}</div>`;
+                const isSelected = selectedAdvisorId === a.id;
+                html += `<div class="advisor-card ${isSelected ? 'selected' : ''}" data-advisor="${a.id}" style="cursor:pointer; text-align:center; padding:var(--sp-4); background:var(--color-bg-alt); border:2px solid ${isSelected ? 'var(--color-accent)' : 'var(--color-border)'}; border-radius:var(--radius-lg); transition:all .2s;">
+                    ${avatar}
+                    <div style="font-weight:700; color:var(--color-heading); margin-top:var(--sp-2);">${a.nombre}</div>
+                    <div style="font-size:var(--fs-xs); color:var(--color-text-dim);">${a.especialidad || 'Asesor comercial'}</div>
+                    <div style="font-size:var(--fs-xs); color:var(--color-accent); margin-top:var(--sp-1);">${a.activeOrders} pedidos activos</div>
+                </div>`;
+            });
+
+            listEl.innerHTML = html;
+
+            // Click handlers
+            listEl.querySelectorAll('.advisor-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    listEl.querySelectorAll('.advisor-card').forEach(c => {
+                        c.classList.remove('selected');
+                        c.style.borderColor = 'var(--color-border)';
+                    });
+                    card.classList.add('selected');
+                    card.style.borderColor = 'var(--color-accent)';
+                    selectedAdvisorId = card.dataset.advisor;
+                    document.getElementById('selectedAdvisor').value = selectedAdvisorId;
+                });
+            });
+        } catch (err) {
+            console.error('Error loading advisors:', err);
+            listEl.innerHTML = '';
+        }
+    }
+
+    // --- Get assigned advisor (auto-balance or selected) ---
+    function getAssignedAdvisor() {
+        if (selectedAdvisorId !== 'auto' && selectedAdvisorId) {
+            return advisors.find(a => a.id === selectedAdvisorId) || null;
+        }
+        // Auto: pick the one with fewest active orders
+        if (advisors.length === 0) return null;
+        return advisors.reduce((min, a) => a.activeOrders < min.activeOrders ? a : min, advisors[0]);
     }
 
     // --- STEP 3: Order summary ---
@@ -275,9 +358,10 @@
         const waText = buildFullWhatsAppText(nombre, telefono, email, notas, total);
 
         if (selectedMethod === 'whatsapp') {
-            // Open WhatsApp directly
-            window.open(`https://wa.me/593997078212?text=${encodeURIComponent(waText)}`, '_blank');
-            showConfirmation('Tu pedido fue enviado por WhatsApp. Un asesor te responderá pronto.');
+            const advisor = getAssignedAdvisor();
+            const waNumber = advisor?.whatsapp || '593997078212';
+            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(waText)}`, '_blank');
+            showConfirmation(`Tu pedido fue enviado por WhatsApp a ${advisor?.nombre || 'un asesor'}. Te responderá pronto.`);
             return;
         }
 
@@ -289,7 +373,7 @@
                 cliente_nombre: nombre,
                 cliente_telefono: telefono,
                 cliente_email: email,
-                estado: selectedMethod === 'paypal' ? 'pendiente' : 'pendiente',
+                estado: 'pendiente',
                 metodo_pago: selectedMethod,
                 subtotal: total,
                 iva: 0,
@@ -298,6 +382,10 @@
             };
 
             if (isLoggedIn) orderData.cliente_id = Auth.getUser().id;
+
+            // Assign advisor
+            const advisor = getAssignedAdvisor();
+            if (advisor) orderData.asesor_id = advisor.id;
 
             const { data: order, error: orderErr } = await supabaseClient
                 .from('ordenes')

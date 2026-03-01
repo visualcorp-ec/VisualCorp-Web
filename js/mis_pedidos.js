@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             estado,
             total,
             tiempo_estimado,
+            asesor_id,
+            asesor:perfiles!ordenes_asesor_id_fkey(nombre, whatsapp, foto_url),
             orden_items (
                 nombre_producto,
                 cantidad
@@ -115,6 +117,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                         `;
         }).join('')}
                 </div>
+
+                ${order.asesor ? `
+                <div style="margin-top:var(--sp-4); padding:var(--sp-3); background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-md); display:flex; align-items:center; gap:var(--sp-3); flex-wrap:wrap;">
+                    <div style="width:40px;height:40px;border-radius:50%;background:var(--color-accent);display:flex;align-items:center;justify-content:center;font-weight:800;color:#111;flex-shrink:0;">${(order.asesor.nombre || '?').charAt(0).toUpperCase()}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight:700; font-size:var(--fs-sm);">Tu asesora: ${order.asesor.nombre}</div>
+                        <div style="font-size:var(--fs-xs); color:var(--color-text-dim);">Puede ponerse en contacto con ella para seguimiento.</div>
+                    </div>
+                    ${order.asesor.whatsapp ? `<a href="https://wa.me/${order.asesor.whatsapp}" target="_blank" class="btn btn--primary" style="font-size:var(--fs-xs); padding:var(--sp-2) var(--sp-3);"><i class="fa-brands fa-whatsapp"></i> Contactar</a>` : ''}
+                </div>
+                ` : ''}
             </div>
         `;
     });

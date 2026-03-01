@@ -88,4 +88,9 @@
     };
     Carrito.updateBadge();
   }
+
+  // --- Inject floating social button ---
+  const floatScript = document.createElement('script');
+  floatScript.src = prefix + 'js/float-social.js';
+  document.body.appendChild(floatScript);
 })();
