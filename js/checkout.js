@@ -15,7 +15,8 @@
     // --- Product type config for customization fields ---
     const CUSTOM_FIELDS = {
         'default': [
-            { key: 'notas', label: '📝 Notas o descripción', type: 'textarea', placeholder: 'Describe cómo quieres tu producto, texto que deseas, colores, fechas, etc, además de agregar archivos.' }
+            { key: 'archivo', label: '🖼️ Archivo adjunto (opcional)', type: 'file', accept: 'image/*,.pdf,.ai,.psd,.cdr' },
+            { key: 'notas', label: '📝 Notas o descripción', type: 'textarea', placeholder: 'Describe cómo quieres tu producto, texto que deseas, colores, fechas, etc. Puedes subir un archivo arriba o enviarlo por WhatsApp.' }
         ],
         'lona': [
             { key: 'ancho', label: '📏 Ancho (cm)', type: 'number', placeholder: 'Ej: 100' },
