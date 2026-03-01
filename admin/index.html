@@ -40,6 +40,9 @@
                     <button class="auth-tab" data-panel="products" id="tabProducts">
                         <i class="fa-solid fa-boxes-stacked"></i> Productos
                     </button>
+                    <button class="auth-tab" data-panel="discounts" id="tabDiscounts">
+                        <i class="fa-solid fa-tags"></i> Descuentos
+                    </button>
                 </div>
 
                 <!-- Panel: Dashboard -->
@@ -94,6 +97,20 @@
                             </div>
                             <div style="color:var(--color-text-dim); font-size:var(--fs-sm);">Producto Más Vendido</div>
                         </div>
+                    </div>
+
+                    <!-- Top 5 Products -->
+                    <div class="calculator fade-in" style="max-width:none; margin-bottom:var(--sp-8);">
+                        <h3 style="color:var(--color-heading); margin-bottom:var(--sp-4);">📊 Top 5 Productos Más
+                            Vendidos</h3>
+                        <div id="topProductsList"></div>
+                    </div>
+
+                    <!-- Advisor Performance -->
+                    <h3 style="color:var(--color-heading); margin-bottom:var(--sp-4);">👩‍💼 Rendimiento de Asesores
+                    </h3>
+                    <div id="advisorPerformance"
+                        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:var(--sp-4); margin-bottom:var(--sp-8);">
                     </div>
                 </div>
 
@@ -197,6 +214,90 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Panel: Descuentos -->
+                <div id="panelDiscounts" style="display:none;">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-6); flex-wrap:wrap; gap:var(--sp-3);">
+                        <h2 style="margin:0; color:var(--color-heading);">Códigos de Descuento</h2>
+                        <button class="btn btn--primary" id="btnAddDiscount">
+                            <i class="fa-solid fa-plus"></i> Nuevo Descuento
+                        </button>
+                    </div>
+                    <div class="calculator fade-in" style="max-width:none; overflow-x:auto;">
+                        <table class="admin-table" id="discountsTable">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    <th>Usos</th>
+                                    <th>Vigencia</th>
+                                    <th>Activo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="discountsBody">
+                                <tr>
+                                    <td colspan="7" style="text-align:center;">Cargando descuentos...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal: Descuento -->
+                <div id="discountModal" class="modal-overlay" style="display:none;">
+                    <div class="auth-card" style="max-width:500px; width:100%;">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-4);">
+                            <h3 id="discountModalTitle" style="margin:0; color:var(--color-heading);">Nuevo Descuento
+                            </h3>
+                            <button id="closeDiscountModal"
+                                style="background:none; border:none; color:var(--color-text-dim); cursor:pointer; font-size:1.5rem;">&times;</button>
+                        </div>
+                        <form id="discountForm" class="auth-form">
+                            <input type="hidden" id="discId">
+                            <div class="form-group">
+                                <label>Código (Ej: PROMO10)</label>
+                                <input type="text" id="discCodigo" required placeholder="PROMO10"
+                                    style="text-transform:uppercase;">
+                            </div>
+                            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-4);">
+                                <div class="form-group">
+                                    <label>Tipo</label>
+                                    <select id="discTipo" required>
+                                        <option value="porcentaje">Porcentaje (%)</option>
+                                        <option value="fijo">Valor Fijo ($)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Valor</label>
+                                    <input type="number" id="discValor" step="0.01" required placeholder="10">
+                                </div>
+                            </div>
+                            <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-4);">
+                                <div class="form-group">
+                                    <label>Fecha Inicio</label>
+                                    <input type="date" id="discInicio">
+                                </div>
+                                <div class="form-group">
+                                    <label>Fecha Fin (opcional)</label>
+                                    <input type="date" id="discFin">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Usos Máximos (vacío = ilimitado)</label>
+                                <input type="number" id="discMaxUsos" placeholder="100">
+                            </div>
+                            <div id="discError" class="auth-error" style="display:none;"></div>
+                            <div id="discSuccess" class="auth-success" style="display:none;"></div>
+                            <button type="submit" class="btn btn--primary" style="width:100%;"
+                                id="discSubmitBtn">Guardar</button>
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -361,6 +462,7 @@
     <script src="js/ordenes.js"></script>
     <script src="js/productos.js"></script>
     <script src="js/dashboard.js"></script>
+    <script src="js/descuentos.js"></script>
     <script>
         const guard = document.getElementById('admin-guard');
         const denied = document.getElementById('admin-denied');
@@ -369,7 +471,7 @@
         const employeeModal = document.getElementById('employeeModal');
 
         // Tab switching
-        const allTabs = ['Dashboard', 'Users', 'Orders', 'Products'];
+        const allTabs = ['Dashboard', 'Users', 'Orders', 'Products', 'Discounts'];
         allTabs.forEach(tab => {
             document.getElementById('tab' + tab).addEventListener('click', () => {
                 allTabs.forEach(t => {

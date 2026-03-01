@@ -242,7 +242,97 @@
         summary.innerHTML = items.map(item =>
             `<div class="kpi"><span class="kpi-label">${item.nombre} ×${item.cantidad}</span><span class="kpi-val">$${(item.precio * item.cantidad).toFixed(2)}</span></div>`
         ).join('');
-        document.getElementById('orderTotal').textContent = `$${total.toFixed(2)}`;
+        updateTotalDisplay(total);
+    }
+
+    let appliedDiscount = null;
+
+    function updateTotalDisplay(subtotal) {
+        let discountValue = 0;
+        if (appliedDiscount) {
+            if (appliedDiscount.tipo === 'porcentaje') {
+                discountValue = subtotal * (appliedDiscount.valor / 100);
+            } else {
+                discountValue = Math.min(appliedDiscount.valor, subtotal);
+            }
+        }
+        const finalTotal = Math.max(0, subtotal - discountValue);
+
+        const discLine = document.getElementById('discountLine');
+        const discAmount = document.getElementById('discountAmount');
+        if (discountValue > 0 && discLine && discAmount) {
+            discLine.style.display = '';
+            discAmount.textContent = `-$${discountValue.toFixed(2)}`;
+        } else if (discLine) {
+            discLine.style.display = 'none';
+        }
+        document.getElementById('orderTotal').textContent = `$${finalTotal.toFixed(2)}`;
+    }
+
+    function getFinalTotal() {
+        const subtotal = Carrito.getTotal();
+        if (!appliedDiscount) return subtotal;
+        let disc = appliedDiscount.tipo === 'porcentaje'
+            ? subtotal * (appliedDiscount.valor / 100)
+            : Math.min(appliedDiscount.valor, subtotal);
+        return Math.max(0, subtotal - disc);
+    }
+
+    // --- Discount code handler ---
+    function setupDiscountCode() {
+        const btn = document.getElementById('btnApplyDiscount');
+        if (!btn) return;
+        btn.addEventListener('click', async () => {
+            const code = document.getElementById('discountCode').value.trim().toUpperCase();
+            const msg = document.getElementById('discountMsg');
+            if (!code) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Verificando...';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('descuentos')
+                    .select('*')
+                    .eq('codigo', code)
+                    .eq('activo', true)
+                    .single();
+
+                if (error || !data) {
+                    msg.innerHTML = '<span style="color:#ef4444;">❌ Código no válido o expirado.</span>';
+                    msg.style.display = 'block';
+                    appliedDiscount = null;
+                    updateTotalDisplay(Carrito.getTotal());
+                    return;
+                }
+
+                // Check expiration
+                if (data.fecha_fin && new Date(data.fecha_fin) < new Date()) {
+                    msg.innerHTML = '<span style="color:#ef4444;">❌ Este código ha expirado.</span>';
+                    msg.style.display = 'block';
+                    return;
+                }
+
+                // Check max uses
+                if (data.usos_maximos && data.usos_actuales >= data.usos_maximos) {
+                    msg.innerHTML = '<span style="color:#ef4444;">❌ Este código ha alcanzado su límite de usos.</span>';
+                    msg.style.display = 'block';
+                    return;
+                }
+
+                appliedDiscount = data;
+                const desc = data.tipo === 'porcentaje' ? `${data.valor}% de descuento` : `$${Number(data.valor).toFixed(2)} de descuento`;
+                msg.innerHTML = `<span style="color:#22c55e;">✅ Código aplicado: ${desc}</span>`;
+                msg.style.display = 'block';
+                updateTotalDisplay(Carrito.getTotal());
+            } catch (err) {
+                msg.innerHTML = '<span style="color:#ef4444;">❌ Error al verificar el código.</span>';
+                msg.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Aplicar';
+            }
+        });
     }
 
     // --- Payment method selection ---
@@ -305,7 +395,7 @@
         const telefono = document.getElementById('checkPhone').value.trim();
         const email = document.getElementById('checkEmail').value.trim();
         const notas = document.getElementById('checkNotes').value.trim();
-        const total = Carrito.getTotal();
+        const total = getFinalTotal();
 
         // 1. Upload files to Supabase Storage
         const uploadPromises = [];
@@ -499,6 +589,7 @@
         updateSteps(3);
         renderOrderSummary();
         setupPaymentMethods();
+        setupDiscountCode();
     });
 
     document.getElementById('btnBackTo2')?.addEventListener('click', () => {

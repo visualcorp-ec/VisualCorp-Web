@@ -113,7 +113,26 @@
                     <h3 style="color:var(--color-heading); margin-bottom:var(--sp-4);">Resumen del Pedido</h3>
                     <div id="orderSummary"></div>
                     <div class="divider-line"></div>
+                    <div id="discountLine" style="display:none;" class="kpi">
+                        <span class="kpi-label" style="color:#22c55e;">🏷️ Descuento</span>
+                        <span id="discountAmount" class="kpi-val" style="color:#22c55e;">-$0.00</span>
+                    </div>
                     <div class="total-grand"><span>TOTAL</span><span id="orderTotal">$0.00</span></div>
+                </div>
+
+                <!-- Discount code -->
+                <div class="calculator fade-in" style="max-width:none; margin-bottom:var(--sp-6); padding:var(--sp-4);">
+                    <div style="display:flex; gap:var(--sp-3); align-items:flex-end;">
+                        <div class="form-group" style="flex:1; margin:0;">
+                            <label style="font-size:var(--fs-sm);"><i class="fa-solid fa-tag"></i> ¿Tienes un código de
+                                descuento?</label>
+                            <input type="text" id="discountCode" placeholder="Ej: PROMO10"
+                                style="text-transform:uppercase;">
+                        </div>
+                        <button class="btn btn--secondary" id="btnApplyDiscount"
+                            style="white-space:nowrap;">Aplicar</button>
+                    </div>
+                    <div id="discountMsg" style="display:none; margin-top:var(--sp-2); font-size:var(--fs-sm);"></div>
                 </div>
 
                 <!-- Payment methods -->
