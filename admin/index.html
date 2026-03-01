@@ -27,8 +27,11 @@
             <div class="container">
 
                 <!-- Tabs -->
-                <div class="auth-tabs" style="max-width:600px; margin-bottom:var(--sp-8);">
-                    <button class="auth-tab active" data-panel="users" id="tabUsers">
+                <div class="auth-tabs" style="max-width:700px; margin-bottom:var(--sp-8);">
+                    <button class="auth-tab active" data-panel="dashboard" id="tabDashboard">
+                        <i class="fa-solid fa-chart-line"></i> Dashboard
+                    </button>
+                    <button class="auth-tab" data-panel="users" id="tabUsers">
                         <i class="fa-solid fa-users"></i> Usuarios
                     </button>
                     <button class="auth-tab" data-panel="orders" id="tabOrders">
@@ -39,8 +42,63 @@
                     </button>
                 </div>
 
+                <!-- Panel: Dashboard -->
+                <div id="panelDashboard">
+                    <h2 style="margin:0 0 var(--sp-6) 0; color:var(--color-heading);">Resumen General</h2>
+                    <div
+                        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:var(--sp-6); margin-bottom:var(--sp-8);">
+                        <div class="calculator fade-in" style="max-width:none; text-align:center; padding:var(--sp-6);">
+                            <div style="font-size:2.5rem; margin-bottom:var(--sp-2);">💰</div>
+                            <div id="statVentas"
+                                style="font-size:var(--fs-2xl); font-weight:800; color:var(--color-accent);">$0.00</div>
+                            <div style="color:var(--color-text-dim); font-size:var(--fs-sm);">Ventas Totales</div>
+                        </div>
+                        <div class="calculator fade-in" style="max-width:none; text-align:center; padding:var(--sp-6);">
+                            <div style="font-size:2.5rem; margin-bottom:var(--sp-2);">📦</div>
+                            <div id="statPedidos"
+                                style="font-size:var(--fs-2xl); font-weight:800; color:var(--color-heading);">0</div>
+                            <div style="color:var(--color-text-dim); font-size:var(--fs-sm);">Pedidos Totales</div>
+                        </div>
+                        <div class="calculator fade-in" style="max-width:none; text-align:center; padding:var(--sp-6);">
+                            <div style="font-size:2.5rem; margin-bottom:var(--sp-2);">⏳</div>
+                            <div id="statPendientes" style="font-size:var(--fs-2xl); font-weight:800; color:#f59e0b;">0
+                            </div>
+                            <div style="color:var(--color-text-dim); font-size:var(--fs-sm);">Pendientes</div>
+                        </div>
+                        <div class="calculator fade-in" style="max-width:none; text-align:center; padding:var(--sp-6);">
+                            <div style="font-size:2.5rem; margin-bottom:var(--sp-2);">✅</div>
+                            <div id="statEntregados" style="font-size:var(--fs-2xl); font-weight:800; color:#22c55e;">0
+                            </div>
+                            <div style="color:var(--color-text-dim); font-size:var(--fs-sm);">Entregados</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:var(--sp-6); margin-bottom:var(--sp-8);">
+                        <div class="calculator fade-in" style="max-width:none; text-align:center; padding:var(--sp-6);">
+                            <div style="font-size:2.5rem; margin-bottom:var(--sp-2);">👥</div>
+                            <div id="statClientes"
+                                style="font-size:var(--fs-2xl); font-weight:800; color:var(--color-heading);">0</div>
+                            <div style="color:var(--color-text-dim); font-size:var(--fs-sm);">Clientes Registrados</div>
+                        </div>
+                        <div class="calculator fade-in" style="max-width:none; text-align:center; padding:var(--sp-6);">
+                            <div style="font-size:2.5rem; margin-bottom:var(--sp-2);">📝</div>
+                            <div id="statProductos"
+                                style="font-size:var(--fs-2xl); font-weight:800; color:var(--color-heading);">0</div>
+                            <div style="color:var(--color-text-dim); font-size:var(--fs-sm);">Productos Activos</div>
+                        </div>
+                        <div class="calculator fade-in"
+                            style="max-width:none; text-align:center; padding:var(--sp-6); grid-column: span 2;">
+                            <div style="font-size:2.5rem; margin-bottom:var(--sp-2);">🏆</div>
+                            <div id="statTopProducto"
+                                style="font-size:var(--fs-lg); font-weight:700; color:var(--color-accent);">&mdash;
+                            </div>
+                            <div style="color:var(--color-text-dim); font-size:var(--fs-sm);">Producto Más Vendido</div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Panel: Usuarios -->
-                <div id="panelUsers">
+                <div id="panelUsers" style="display:none;">
                     <div
                         style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-6);">
                         <h2 style="margin:0; color:var(--color-heading);">Usuarios Registrados</h2>
@@ -302,6 +360,7 @@
     <script src="../js/menu.js"></script>
     <script src="js/ordenes.js"></script>
     <script src="js/productos.js"></script>
+    <script src="js/dashboard.js"></script>
     <script>
         const guard = document.getElementById('admin-guard');
         const denied = document.getElementById('admin-denied');
@@ -310,7 +369,7 @@
         const employeeModal = document.getElementById('employeeModal');
 
         // Tab switching
-        const allTabs = ['Users', 'Orders', 'Products'];
+        const allTabs = ['Dashboard', 'Users', 'Orders', 'Products'];
         allTabs.forEach(tab => {
             document.getElementById('tab' + tab).addEventListener('click', () => {
                 allTabs.forEach(t => {
