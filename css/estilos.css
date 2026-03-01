@@ -880,12 +880,14 @@ input:focus {
     right: 0;
     bottom: 0;
     flex-direction: column;
-    background: rgba(11, 15, 25, .96);
-    backdrop-filter: blur(16px);
+    background: var(--color-bg);
+    backdrop-filter: none;
     padding: var(--sp-10) var(--sp-6);
     gap: var(--sp-6);
     transform: translateX(100%);
     transition: transform var(--duration) var(--ease-out);
+    z-index: 999;
+    overflow-y: auto;
   }
 
   .nav__links.open {
