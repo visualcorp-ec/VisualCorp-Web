@@ -912,12 +912,33 @@ input:focus {
 }
 
 .store-sidebar {
-  background: var(--color-surface);
+  background: var(--color-bg-alt);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   padding: var(--sp-6);
   position: sticky;
   top: 100px;
+  height: max-content;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+/* Custom Scrollbar for Sidebar */
+.store-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.store-sidebar::-webkit-scrollbar-track {
+  background: var(--color-bg-alt);
+}
+
+.store-sidebar::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.store-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
 }
 
 .store-sidebar__title {
@@ -2745,4 +2766,61 @@ body.light .site-header {
     height: 100%;
     transform: translateY(50%);
   }
+}
+
+/* =========================================
+   STORE REDESIGN (AMAZON STYLE) + CURSORS
+========================================= */
+
+/* Cursor fixes */
+.product-card {
+  cursor: pointer;
+}
+
+/* Amazon Style Promo Banner */
+.promo-banner {
+  background: linear-gradient(135deg, var(--color-surface), rgba(242, 183, 5, 0.1));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-8) var(--sp-6);
+  margin-bottom: var(--sp-10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.promo-banner__content {
+  flex: 1;
+}
+
+.promo-banner h2 {
+  font-size: var(--fs-2xl);
+  color: var(--color-heading);
+  margin-bottom: var(--sp-2);
+  font-weight: 800;
+}
+
+.promo-banner p {
+  color: var(--color-text-dim);
+  font-size: var(--fs-md);
+}
+
+/* Trending Section */
+.trending-title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  color: var(--color-heading);
+  margin-bottom: var(--sp-6);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.trending-title i {
+  color: var(--color-accent);
+}
+
+.trending-products {
+  margin-bottom: var(--sp-16);
 }

@@ -31,6 +31,7 @@
             allProducts = [...souv, ...pers, ...imp];
             renderCategories();
             applyFilters();
+            renderTrendingProducts();
         } catch (err) {
             console.error('Error cargando tienda:', err);
             grid.innerHTML = `
@@ -109,13 +110,24 @@
             }
         }
 
+        // Hide featured section if searching or filtering by category, show catalog focus
+        const catalogSection = document.getElementById('mainStoreCatalog');
+        const featuredSection = document.querySelector('.store-featured');
+        if (featuredSection) {
+            if (activeCategory !== 'Todos' || searchTerm !== '') {
+                featuredSection.style.display = 'none';
+            } else {
+                featuredSection.style.display = 'block';
+            }
+        }
+
         // Search filter
         if (searchTerm) {
-            const q = searchTerm.toLowerCase();
+            const searchTermLower = searchTerm.toLowerCase();
             filtered = filtered.filter(p =>
-                (p.nombre || '').toLowerCase().includes(q) ||
-                (p.codigo || '').toLowerCase().includes(q) ||
-                (p.subcategoria || '').toLowerCase().includes(q)
+                (p.nombre || '').toLowerCase().includes(searchTermLower) ||
+                (p.codigo || '').toLowerCase().includes(searchTermLower) ||
+                (p.subcategoria || '').toLowerCase().includes(searchTermLower)
             );
         }
 
@@ -196,6 +208,62 @@
 
         // Add to cart events
         grid.querySelectorAll('.btn-add-cart').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                const id = btn.dataset.id;
+                const p = allProducts.find(x => x.id === id);
+                if (!p) return;
+                Carrito.addItem({
+                    id: p.id,
+                    nombre: p.nombre,
+                    codigo: p.codigo,
+                    precio: getMinPrice(p),
+                    cantidad: 1,
+                    imagen: p.imagen_url || '',
+                    subcategoria: p.subcategoria,
+                    escalas_precios: p.escalas_precios || []
+                });
+            });
+        });
+    }
+
+    // Render Trending Products
+    function renderTrendingProducts() {
+        const trendingGrid = document.getElementById('trendingProducts');
+        if (!trendingGrid) return;
+
+        // Get 4 or 8 somewhat random products to display as trending
+        const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
+        const trending = shuffled.slice(0, 4);
+
+        trendingGrid.innerHTML = trending.map((p, i) => {
+            const delay = `fade-in-delay-${(i % 4) + 1}`;
+            const imgSrc = p.imagen_url || 'https://placehold.co/400x260/1a2035/f2b705?text=Sin+Imagen';
+            const price = getDisplayPrice(p);
+            const priceLabel = getDisplayPriceLabel(p);
+
+            return `
+        <article class="product-card fade-in ${delay}" data-id="${p.id}">
+          <div class="product-badge" style="position:absolute; top:12px; left:12px; background:var(--color-accent); color:#111; padding:2px 10px; border-radius:var(--radius-full); font-size:var(--fs-xs); font-weight:800; z-index:2;">POPULAR 🔥</div>
+          <img class="product-card__img" src="${imgSrc}" alt="${p.nombre}" loading="lazy">
+          <div class="product-card__body">
+            <h3 class="product-card__name">${p.nombre}</h3>
+            <span class="product-card__sub">${p.subcategoria || ''}</span>
+            <div class="product-card__price-row">
+              <div>
+                <span class="product-card__price">${price}</span>
+                <span class="product-card__price-label">${priceLabel}</span>
+              </div>
+              <button class="btn-add-cart" data-id="${p.id}" title="Agregar al carrito">
+                <i class="fa-solid fa-cart-plus"></i>
+              </button>
+            </div>
+          </div>
+        </article>`;
+        }).join('');
+
+        // Attach event listeners for Trending Add to Cart
+        trendingGrid.querySelectorAll('.btn-add-cart').forEach(btn => {
             btn.addEventListener('click', e => {
                 e.stopPropagation();
                 const id = btn.dataset.id;
