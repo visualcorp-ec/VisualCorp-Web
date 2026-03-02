@@ -85,6 +85,10 @@ async function loadCarousel() {
 }
 
 // ===== FESTIVE DATES =====
+let festiveDatesCache = [];
+let currentCalendarMonth = new Date().getMonth();
+let currentCalendarYear = new Date().getFullYear();
+
 async function loadFestiveDates() {
     try {
         const { data: dates } = await supabaseClient
@@ -95,50 +99,129 @@ async function loadFestiveDates() {
 
         if (!dates || dates.length === 0) return;
 
-        // Filter to show upcoming and current dates (not past)
-        const now = new Date();
-        const upcoming = dates.filter(d => new Date(d.fecha_fin) >= now);
-        if (upcoming.length === 0) return;
-
+        festiveDatesCache = dates;
         const section = document.getElementById('festiveDatesSection');
-        const list = document.getElementById('festiveDatesList');
         section.style.display = '';
 
-        list.innerHTML = upcoming.map(d => {
+        // Inject Calendar Container UI
+        const listContainer = document.getElementById('festiveDatesList');
+        listContainer.style.display = 'block'; // Remove grid that was inline
+        listContainer.innerHTML = `
+            <div class="calendar-wrapper" style="background:var(--color-bg-alt); border:1px solid var(--color-border); border-radius:var(--radius-xl); padding:var(--sp-6);">
+                <div class="calendar-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-6);">
+                    <button id="prevMonthBtn" class="btn btn--secondary" style="padding:var(--sp-2) var(--sp-4);"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h3 id="calendarMonthTitle" style="margin:0; font-size:var(--fs-xl); color:var(--color-heading); text-transform:capitalize;"></h3>
+                    <button id="nextMonthBtn" class="btn btn--secondary" style="padding:var(--sp-2) var(--sp-4);"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid-header" style="display:grid; grid-template-columns:repeat(7, 1fr); text-align:center; font-weight:700; color:var(--color-text-muted); margin-bottom:var(--sp-2);">
+                    <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+                </div>
+                <div id="calendarDays" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:var(--sp-2);"></div>
+                <div id="calendarEvents" style="margin-top:var(--sp-6); display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:var(--sp-4);"></div>
+            </div>
+        `;
+
+        document.getElementById('prevMonthBtn').addEventListener('click', () => changeMonth(-1));
+        document.getElementById('nextMonthBtn').addEventListener('click', () => changeMonth(1));
+
+        renderCalendar();
+
+    } catch (err) {
+        console.error('Error loading festive dates:', err);
+    }
+}
+
+function changeMonth(delta) {
+    currentCalendarMonth += delta;
+    if (currentCalendarMonth < 0) {
+        currentCalendarMonth = 11;
+        currentCalendarYear--;
+    } else if (currentCalendarMonth > 11) {
+        currentCalendarMonth = 0;
+        currentCalendarYear++;
+    }
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const title = document.getElementById('calendarMonthTitle');
+    const daysGrid = document.getElementById('calendarDays');
+    const eventsGrid = document.getElementById('calendarEvents');
+
+    const date = new Date(currentCalendarYear, currentCalendarMonth, 1);
+    title.textContent = date.toLocaleDateString('es-EC', { month: 'long', year: 'numeric' });
+
+    // Calendar logic
+    const firstDay = date.getDay();
+    const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
+
+    // Find events happening in this month
+    const monthEvents = festiveDatesCache.filter(d => {
+        const start = new Date(d.fecha_inicio);
+        const end = new Date(d.fecha_fin);
+        return (start.getFullYear() === currentCalendarYear && start.getMonth() === currentCalendarMonth) ||
+            (end.getFullYear() === currentCalendarYear && end.getMonth() === currentCalendarMonth) ||
+            (start <= date && end >= new Date(currentCalendarYear, currentCalendarMonth, daysInMonth));
+    });
+
+    let daysHtml = '';
+    // Empty padding days
+    for (let i = 0; i < firstDay; i++) {
+        daysHtml += `<div style="padding:var(--sp-3); border-radius:var(--radius-md); background:transparent;"></div>`;
+    }
+
+    // Days
+    const today = new Date();
+    for (let i = 1; i <= daysInMonth; i++) {
+        const currentIterDate = new Date(currentCalendarYear, currentCalendarMonth, i);
+        let hasEvent = monthEvents.find(e => {
+            const s = new Date(e.fecha_inicio); s.setHours(0, 0, 0, 0);
+            const en = new Date(e.fecha_fin); en.setHours(23, 59, 59, 999);
+            return currentIterDate >= s && currentIterDate <= en;
+        });
+
+        const isToday = currentIterDate.getDate() === today.getDate() && currentIterDate.getMonth() === today.getMonth() && currentIterDate.getFullYear() === today.getFullYear();
+
+        let bg = 'var(--color-surface)';
+        let color = 'var(--color-text)';
+        let border = '1px solid var(--color-border)';
+
+        if (hasEvent) {
+            bg = `${hasEvent.color}20`;
+            color = hasEvent.color;
+            border = `1px solid ${hasEvent.color}`;
+        }
+        if (isToday) {
+            border = `2px solid var(--color-heading)`;
+        }
+
+        daysHtml += `<div style="text-align:center; padding:var(--sp-3); border-radius:var(--radius-md); background:${bg}; color:${color}; border:${border}; font-weight:${hasEvent ? '800' : '400'};">
+            ${i}
+        </div>`;
+    }
+    daysGrid.innerHTML = daysHtml;
+
+    // Render Event Cards below calendar
+    if (monthEvents.length === 0) {
+        eventsGrid.innerHTML = `<p style="color:var(--color-text-dim); text-align:center; grid-column:1/-1;">No hay promociones especiales este mes.</p>`;
+    } else {
+        eventsGrid.innerHTML = monthEvents.map(d => {
             const start = new Date(d.fecha_inicio);
             const end = new Date(d.fecha_fin);
-            const isActive = now >= start && now <= end;
-            const daysUntil = Math.ceil((start - now) / (1000 * 60 * 60 * 24));
-
-            const countdown = isActive
-                ? '<span style="color:#22c55e; font-weight:700;">🟢 ¡Ahora activa!</span>'
-                : daysUntil <= 30
-                    ? `<span style="color:var(--color-accent); font-weight:700;">⏰ En ${daysUntil} días</span>`
-                    : `<span style="color:var(--color-text-dim);">📅 ${start.toLocaleDateString('es-EC', { month: 'long', day: 'numeric' })}</span>`;
-
             const discount = d.descuentos
                 ? `<div style="margin-top:var(--sp-3); padding:var(--sp-2) var(--sp-3); background:${d.color}20; border-radius:var(--radius-md); font-size:var(--fs-sm); font-weight:700; color:${d.color};">
                     🏷️ Código: <span style="font-family:monospace;">${d.descuentos.codigo}</span> — ${d.descuentos.tipo === 'porcentaje' ? d.descuentos.valor + '% OFF' : '$' + d.descuentos.valor + ' OFF'}
                 </div>`
                 : '';
 
-            return `<div class="fade-in" style="background:var(--color-bg-alt); border:2px solid ${d.color}40; border-radius:var(--radius-lg); overflow:hidden; transition:transform .2s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
-                <div style="height:6px; background:${d.color};"></div>
-                <div style="padding:var(--sp-5);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-2);">
-                        <h3 style="margin:0; color:${d.color}; font-size:var(--fs-lg);">${d.nombre}</h3>
-                        ${countdown}
-                    </div>
-                    <p style="margin:0; font-size:var(--fs-sm); color:var(--color-text-dim);">
-                        ${start.toLocaleDateString('es-EC', { month: 'long', day: 'numeric' })} — ${end.toLocaleDateString('es-EC', { month: 'long', day: 'numeric', year: 'numeric' })}
-                    </p>
-                    ${discount}
-                </div>
+            return `<div class="fade-in" style="background:var(--color-surface); border-left:4px solid ${d.color}; border-radius:var(--radius-lg); padding:var(--sp-4);">
+                <h4 style="margin:0 0 var(--sp-1) 0; color:${d.color}; font-size:var(--fs-base);">${d.nombre}</h4>
+                <p style="margin:0; font-size:var(--fs-xs); color:var(--color-text-dim);">
+                    ${start.toLocaleDateString('es-EC', { month: 'short', day: 'numeric' })} — ${end.toLocaleDateString('es-EC', { month: 'short', day: 'numeric' })}
+                </p>
+                ${discount}
             </div>`;
         }).join('');
-
-    } catch (err) {
-        console.error('Error loading festive dates:', err);
     }
 }
 
@@ -208,16 +291,11 @@ function renderProducts(products, salesMap) {
     section.style.display = '';
 
     list.innerHTML = products.map(p => {
-        const salesBadge = salesMap[p.id]
-            ? `<div style="position:absolute; top:var(--sp-2); right:var(--sp-2); background:var(--color-accent); color:#111; font-size:var(--fs-xs); font-weight:800; padding:2px 8px; border-radius:var(--radius-md);">🔥 ${salesMap[p.id].qty} vendidos</div>`
-            : '';
-
         const img = p.imagen_url || p.imagen
             ? `<img src="${p.imagen_url || p.imagen}" alt="${p.nombre}" style="width:100%; height:180px; object-fit:cover;" loading="lazy">`
             : `<div style="width:100%; height:180px; background:var(--color-surface); display:flex; align-items:center; justify-content:center; color:var(--color-text-dim); font-size:2rem;">📦</div>`;
 
         return `<div class="fade-in" style="background:var(--color-bg-alt); border:1px solid var(--color-border); border-radius:var(--radius-lg); overflow:hidden; transition:transform .2s; position:relative;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
-            ${salesBadge}
             ${img}
             <div style="padding:var(--sp-4);">
                 <h4 style="margin:0 0 var(--sp-1) 0; color:var(--color-heading); font-size:var(--fs-base);">${p.nombre}</h4>
