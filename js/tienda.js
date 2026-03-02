@@ -31,7 +31,7 @@
             allProducts = [...souv, ...pers, ...imp];
             renderCategories();
             applyFilters();
-            renderTrendingProducts();
+            renderCarousels();
         } catch (err) {
             console.error('Error cargando tienda:', err);
             grid.innerHTML = `
@@ -227,12 +227,14 @@
         });
     }
 
-    // Render Trending Products
-    function renderTrendingProducts() {
+    // Render Trending & New Products
+    function renderCarousels() {
         const trendingGrid = document.getElementById('trendingProducts');
-        if (!trendingGrid) return;
+        const newGrid = document.getElementById('newProducts');
 
-        // Get 4 or 8 somewhat random products to display as trending
+        if (!trendingGrid || !newGrid || allProducts.length === 0) return;
+
+        // --- Ofertas Flash (Random selection) ---
         const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
         const trending = shuffled.slice(0, 4);
 
@@ -244,7 +246,7 @@
 
             return `
         <article class="product-card fade-in ${delay}" data-id="${p.id}">
-          <div class="product-badge" style="position:absolute; top:12px; left:12px; background:var(--color-accent); color:#111; padding:2px 10px; border-radius:var(--radius-full); font-size:var(--fs-xs); font-weight:800; z-index:2;">POPULAR 🔥</div>
+          <div class="product-badge" style="position:absolute; top:12px; left:12px; background:var(--color-accent); color:#111; padding:2px 10px; border-radius:var(--radius-full); font-size:var(--fs-xs); font-weight:800; z-index:2; box-shadow:0 2px 10px rgba(0,0,0,0.5);">⚡ OFERTA FLASH</div>
           <img class="product-card__img" src="${imgSrc}" alt="${p.nombre}" loading="lazy">
           <div class="product-card__body">
             <h3 class="product-card__name">${p.nombre}</h3>
@@ -262,22 +264,53 @@
         </article>`;
         }).join('');
 
-        // Attach event listeners for Trending Add to Cart
-        trendingGrid.querySelectorAll('.btn-add-cart').forEach(btn => {
-            btn.addEventListener('click', e => {
-                e.stopPropagation();
-                const id = btn.dataset.id;
-                const p = allProducts.find(x => x.id === id);
-                if (!p) return;
-                Carrito.addItem({
-                    id: p.id,
-                    nombre: p.nombre,
-                    codigo: p.codigo,
-                    precio: getMinPrice(p),
-                    cantidad: 1,
-                    imagen: p.imagen_url || '',
-                    subcategoria: p.subcategoria,
-                    escalas_precios: p.escalas_precios || []
+        // --- Lo Más Nuevo (Another set of products, ideally newest but we'll use next slice) ---
+        const newArrivals = shuffled.slice(4, 8);
+
+        newGrid.innerHTML = newArrivals.map((p, i) => {
+            const delay = `fade-in-delay-${(i % 4) + 1}`;
+            const imgSrc = p.imagen_url || 'https://placehold.co/400x260/1a2035/f2b705?text=Sin+Imagen';
+            const price = getDisplayPrice(p);
+            const priceLabel = getDisplayPriceLabel(p);
+
+            return `
+        <article class="product-card fade-in ${delay}" data-id="${p.id}">
+          <div class="product-badge" style="position:absolute; top:12px; left:12px; background:#06b6d4; color:#fff; padding:2px 10px; border-radius:var(--radius-full); font-size:var(--fs-xs); font-weight:800; z-index:2; box-shadow:0 2px 10px rgba(0,0,0,0.5);">✨ NUEVO</div>
+          <img class="product-card__img" src="${imgSrc}" alt="${p.nombre}" loading="lazy">
+          <div class="product-card__body">
+            <h3 class="product-card__name">${p.nombre}</h3>
+            <span class="product-card__sub">${p.subcategoria || ''}</span>
+            <div class="product-card__price-row">
+              <div>
+                <span class="product-card__price">${price}</span>
+                <span class="product-card__price-label">${priceLabel}</span>
+              </div>
+              <button class="btn-add-cart" data-id="${p.id}" title="Agregar al carrito">
+                <i class="fa-solid fa-cart-plus"></i>
+              </button>
+            </div>
+          </div>
+        </article>`;
+        }).join('');
+
+        // Attach event listeners for Add to Cart for both grids
+        [trendingGrid, newGrid].forEach(grid => {
+            grid.querySelectorAll('.btn-add-cart').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    const id = btn.dataset.id;
+                    const p = allProducts.find(x => x.id === id);
+                    if (!p) return;
+                    Carrito.addItem({
+                        id: p.id,
+                        nombre: p.nombre,
+                        codigo: p.codigo,
+                        precio: getMinPrice(p),
+                        cantidad: 1,
+                        imagen: p.imagen_url || '',
+                        subcategoria: p.subcategoria,
+                        escalas_precios: p.escalas_precios || []
+                    });
                 });
             });
         });

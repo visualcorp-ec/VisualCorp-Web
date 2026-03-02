@@ -56,20 +56,61 @@
         </div>
     </section>
 
-    <!-- Featured / Promo Section -->
-    <section class="store-featured reveal reveal--fade" style="padding-bottom:var(--sp-8);">
+    <!-- Mega Promo Banners (Amazon Style) -->
+    <section class="store-featured reveal reveal--fade" style="padding-bottom:var(--sp-6);">
         <div class="container">
-            <div class="promo-banner fade-in">
-                <div class="promo-banner__content">
-                    <h2>Lo Mejor de VisualCorp 🚀</h2>
-                    <p>Encuentra lo último en souvenirs y personalizados para todas las ocasiones.</p>
+            <div class="mega-banners-grid">
+                <!-- Banner Principal -->
+                <div class="mega-banner mega-banner--main fade-in">
+                    <div class="mega-banner__content">
+                        <span class="mega-banner__tag">NUEVA TEMPORADA</span>
+                        <h2>Tus Ideas en<br>Alta Calidad</h2>
+                        <p>Gorras, libretas, camisetas y gigantografías creadas a tu medida.</p>
+                        <button class="btn"
+                            style="background:#111; color:#fff; border:none; margin-top:var(--sp-2);">Empezar a
+                            Crear</button>
+                    </div>
+                </div>
+                <!-- Banners Secundarios -->
+                <div class="mega-banner mega-banner--sub1 fade-in" data-delay="100">
+                    <div class="mega-banner__content">
+                        <h3>Envíos Seguros 🚛</h3>
+                        <p>Trabajamos a nivel nacional para que tu marca llegue a todos lados.</p>
+                    </div>
+                </div>
+                <div class="mega-banner mega-banner--sub2 fade-in" data-delay="200">
+                    <div class="mega-banner__content">
+                        <h3>Descuentos Corporativos 🏢</h3>
+                        <p>Cotiza por mayor para tu empresa y obtén precios especiales en regalos y papelería.</p>
+                        <a href="calculadora.html" style="color:#111; font-weight:700; text-decoration:underline;">Ir a
+                            Calculadora →</a>
+                    </div>
                 </div>
             </div>
 
-            <div class="trending-section fade-in" data-delay="100">
-                <h3 class="trending-title"><i class="fa-solid fa-fire"></i> Recomendados para Ti</h3>
+            <!-- Trending / Ofertas Flash -->
+            <div class="trending-section fade-in" data-delay="300" style="margin-top:var(--sp-12);">
+                <div
+                    style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--color-border); padding-bottom:var(--sp-4); margin-bottom:var(--sp-6);">
+                    <h3 class="trending-title" style="margin:0;"><i class="fa-solid fa-bolt"
+                            style="color:var(--color-accent);"></i> Ofertas Flash</h3>
+                    <a href="#" style="color:var(--color-secondary); font-size:var(--fs-sm); font-weight:600;">Ver Todo
+                        →</a>
+                </div>
                 <div class="product-grid" id="trendingProducts">
                     <!-- Tendencias se inyectan acá -->
+                </div>
+            </div>
+
+            <!-- New Arrivals -->
+            <div class="trending-section fade-in" data-delay="400" style="margin-top:var(--sp-12);">
+                <div
+                    style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--color-border); padding-bottom:var(--sp-4); margin-bottom:var(--sp-6);">
+                    <h3 class="trending-title" style="margin:0;"><i class="fa-solid fa-star" style="color:#06b6d4;"></i>
+                        Lo Más Nuevo</h3>
+                </div>
+                <div class="product-grid" id="newProducts">
+                    <!-- Nuevos productos se inyectan acá -->
                 </div>
             </div>
         </div>
