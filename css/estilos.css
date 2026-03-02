@@ -223,6 +223,9 @@ a:hover {
 
 .nav__link {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
   font-size: var(--fs-sm);
   font-weight: 500;
   color: var(--color-text-muted);
@@ -801,7 +804,7 @@ input:focus {
 
 .search-box__input {
   width: 100%;
-  padding: .85rem 1rem .85rem 3.5rem;
+  padding: .85rem 1rem .85rem 3rem !important;
   border-radius: var(--radius-full);
   background: var(--color-bg-alt);
   border: 1px solid var(--color-border);

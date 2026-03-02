@@ -62,11 +62,19 @@ const Carrito = (function () {
 
     // Dynamic Pricing Logic Based on Scales
     function recalculatePrice(item) {
-        if (!item.escalas_precios || item.escalas_precios.length === 0) return;
-        const prices = item.escalas_precios;
-        let finalPvp = prices[0].pvp; // highest base 
+        if (!item.escalas_precios || !Array.isArray(item.escalas_precios) || item.escalas_precios.length === 0) return;
+
+        // Ensure sorted by quantity ascending and parse numbers safely
+        const prices = [...item.escalas_precios].map(p => ({
+            qty: Number(p.qty),
+            pvp: Number(p.pvp)
+        })).sort((a, b) => a.qty - b.qty);
+
+        let finalPvp = prices[0].pvp;
+        const qtyToCompare = Number(item.cantidad);
+
         for (let i = prices.length - 1; i >= 0; i--) {
-            if (item.cantidad >= prices[i].qty) {
+            if (qtyToCompare >= prices[i].qty) {
                 finalPvp = prices[i].pvp;
                 break;
             }
