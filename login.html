@@ -124,8 +124,8 @@
                 );
                 window.location.href = 'index.html';
             } catch (err) {
-                loginError.textContent = translateError(err.message);
-                loginError.style.display = 'block';
+                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> <span>${translateError(err.message)}</span>`;
+                loginError.style.display = 'flex';
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Entrar';
             }
@@ -151,19 +151,20 @@
                 registerSuccess.style.display = 'block';
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Cuenta creada!';
             } catch (err) {
-                registerError.textContent = translateError(err.message);
-                registerError.style.display = 'block';
+                registerError.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> <span>${translateError(err.message)}</span>`;
+                registerError.style.display = 'flex';
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Crear Cuenta';
             }
         });
 
         function translateError(msg) {
-            if (msg.includes('Invalid login')) return 'Email o contraseña incorrectos.';
+            if (msg.includes('Invalid login')) return 'Email o contraseña incorrectos. Verifica que tu cuenta exista.';
             if (msg.includes('already registered')) return 'Este email ya está registrado. Intenta iniciar sesión.';
             if (msg.includes('Password')) return 'La contraseña debe tener al menos 6 caracteres.';
             if (msg.includes('Email')) return 'Ingresa un email válido.';
-            return 'Error: ' + msg;
+            if (msg.includes('Database')) return 'Error de conexión. Intenta más tarde.';
+            return 'Ocurrió un error. Verifica tus datos (' + msg + ')';
         }
 
         // Redirect if already logged in

@@ -73,11 +73,21 @@
         form.reset();
         document.getElementById('prodId').value = '';
         document.getElementById('prodImagenPreview').innerHTML = '';
+        document.getElementById('stockWrapper').style.display = 'none';
+        document.getElementById('variantesWrapper').style.display = 'none';
         document.getElementById('prodError').style.display = 'none';
         document.getElementById('prodSuccess').style.display = 'none';
         modalTitle.textContent = 'Nuevo Producto';
         submitBtn.textContent = 'Guardar Producto';
         modal.style.display = '';
+    });
+
+    // --- Dynamic Wrappers ---
+    document.getElementById('prodControlStock')?.addEventListener('change', (e) => {
+        document.getElementById('stockWrapper').style.display = e.target.checked ? 'flex' : 'none';
+    });
+    document.getElementById('prodTieneVariantes')?.addEventListener('change', (e) => {
+        document.getElementById('variantesWrapper').style.display = e.target.checked ? 'grid' : 'none';
     });
 
     // --- Close modal ---
@@ -116,6 +126,24 @@
             const descripcion = document.getElementById('prodDescripcion').value.trim();
             const fileInput = document.getElementById('prodImagen');
 
+            // Etiquetas
+            const oferta_flash = document.getElementById('prodOfertaFlash').checked;
+            const nuevo = document.getElementById('prodNuevo').checked;
+            const popular = document.getElementById('prodPopular').checked;
+            const promocion = document.getElementById('prodPromocion').checked;
+
+            // Stock
+            const control_stock = document.getElementById('prodControlStock').checked;
+            const stock = control_stock ? parseInt(document.getElementById('prodStock').value || 0) : 0;
+
+            // Variantes
+            const tiene_variantes = document.getElementById('prodTieneVariantes').checked;
+            const variantes = {
+                tiene_variantes: tiene_variantes,
+                colores: tiene_variantes ? document.getElementById('prodColores').value.split(',').map(s => s.trim()).filter(Boolean) : [],
+                tallas: tiene_variantes ? document.getElementById('prodTallas').value.split(',').map(s => s.trim()).filter(Boolean) : []
+            };
+
             let imagen_url = null;
 
             // Upload image if selected
@@ -145,7 +173,14 @@
                 subcategoria,
                 codigo,
                 precio_pvp: precio,
-                descripcion
+                descripcion,
+                oferta_flash,
+                nuevo,
+                popular,
+                promocion,
+                control_stock,
+                stock,
+                variantes
             };
 
             if (imagen_url) productData.imagen_url = imagen_url;
@@ -201,6 +236,26 @@
         document.getElementById('prodCodigo').value = data.codigo || '';
         document.getElementById('prodPrecio').value = data.precio_pvp || '';
         document.getElementById('prodDescripcion').value = data.descripcion || '';
+
+        // Cargar etiquetas
+        document.getElementById('prodOfertaFlash').checked = !!data.oferta_flash;
+        document.getElementById('prodNuevo').checked = !!data.nuevo;
+        document.getElementById('prodPopular').checked = !!data.popular;
+        document.getElementById('prodPromocion').checked = !!data.promocion;
+
+        // Cargar Stock
+        document.getElementById('prodControlStock').checked = !!data.control_stock;
+        document.getElementById('prodStock').value = data.stock || 0;
+        document.getElementById('stockWrapper').style.display = data.control_stock ? 'flex' : 'none';
+
+        // Cargar Variantes
+        const vars = data.variantes || {};
+        const tieneVar = !!vars.tiene_variantes;
+        document.getElementById('prodTieneVariantes').checked = tieneVar;
+        document.getElementById('prodColores').value = tieneVar && vars.colores ? vars.colores.join(', ') : '';
+        document.getElementById('prodTallas').value = tieneVar && vars.tallas ? vars.tallas.join(', ') : '';
+        document.getElementById('variantesWrapper').style.display = tieneVar ? 'grid' : 'none';
+
         document.getElementById('prodError').style.display = 'none';
         document.getElementById('prodSuccess').style.display = 'none';
 

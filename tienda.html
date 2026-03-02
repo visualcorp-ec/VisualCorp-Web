@@ -56,69 +56,127 @@
         </div>
     </section>
 
+    <!-- Banner Dinámico por Geolocalización -->
+    <div id="geoDiscountBanner" class="container reveal reveal--fade" style="display:none; padding-top:var(--sp-4);">
+        <div
+            style="background:linear-gradient(135deg, rgba(6,182,212,0.15), rgba(6,182,212,0.05)); border:1px solid rgba(6,182,212,0.3); border-radius:var(--radius-xl); padding:var(--sp-4); display:flex; align-items:center; gap:var(--sp-4); backdrop-filter:blur(8px);">
+            <div style="font-size:2rem; padding:0 var(--sp-2);">📍</div>
+            <div style="flex:1;">
+                <h3 style="margin:0 0 var(--sp-1); font-size:var(--fs-lg); color:var(--color-heading);">¡Oferta Especial
+                    para tu Ciudad!</h3>
+                <p style="margin:0; font-size:var(--fs-sm); color:var(--color-text-dim);">Detectamos que nos visitas
+                    desde <strong id="geoCityName" style="color:var(--color-accent);">tu ubicación</strong>. Usa el
+                    código <strong><span id="geoPromoCode">LOCAL10</span></strong> en tu carrito para un 10% de
+                    descuento en tu primer pedido.</p>
+            </div>
+            <button class="btn btn--outline"
+                onclick="document.getElementById('geoDiscountBanner').style.display='none';"><i
+                    class="fa-solid fa-times"></i></button>
+        </div>
+    </div>
+
     <!-- Mega Promo Banners (Amazon Style) -->
-    <section class="store-featured reveal reveal--fade" style="padding-bottom:var(--sp-6);">
+    <section class="store-featured" style="padding-bottom:var(--sp-6); margin-top:var(--sp-4);">
         <div class="container">
-            <div class="mega-banners-grid">
-                <!-- Banner Principal -->
-                <div class="mega-banner mega-banner--main fade-in">
-                    <div class="mega-banner__content">
-                        <span class="mega-banner__tag">NUEVA TEMPORADA</span>
-                        <h2>Tus Ideas en<br>Alta Calidad</h2>
-                        <p>Gorras, libretas, camisetas y gigantografías creadas a tu medida.</p>
-                        <button class="btn"
-                            style="background:#111; color:#fff; border:none; margin-top:var(--sp-2);">Empezar a
-                            Crear</button>
-                    </div>
-                </div>
-                <!-- Banners Secundarios -->
-                <div class="mega-banner mega-banner--sub1 fade-in" data-delay="100">
-                    <div class="mega-banner__content">
-                        <h3>Envíos Seguros 🚛</h3>
-                        <p>Trabajamos a nivel nacional para que tu marca llegue a todos lados.</p>
-                    </div>
-                </div>
-                <div class="mega-banner mega-banner--sub2 fade-in" data-delay="200">
-                    <div class="mega-banner__content">
-                        <h3>Descuentos Corporativos 🏢</h3>
-                        <p>Cotiza por mayor para tu empresa y obtén precios especiales en regalos y papelería.</p>
-                        <a href="calculadora.html" style="color:#111; font-weight:700; text-decoration:underline;">Ir a
-                            Calculadora →</a>
-                    </div>
-                </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:var(--sp-6);">
+                <h2 style="font-size:var(--fs-xl); margin:0;">Destacados de la Semana</h2>
+                <button id="btnTogglePromos" class="btn btn--outline"
+                    style="font-size:var(--fs-sm); padding:var(--sp-2) var(--sp-4);">Ocultar Promociones <i
+                        class="fa-solid fa-chevron-up"></i></button>
             </div>
 
-            <!-- Trending / Ofertas Flash -->
-            <div class="trending-section fade-in" data-delay="300" style="margin-top:var(--sp-12);">
-                <div
-                    style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--color-border); padding-bottom:var(--sp-4); margin-bottom:var(--sp-6);">
-                    <h3 class="trending-title" style="margin:0;"><i class="fa-solid fa-bolt"
-                            style="color:var(--color-accent);"></i> Ofertas Flash</h3>
-                    <a href="#" style="color:var(--color-secondary); font-size:var(--fs-sm); font-weight:600;">Ver Todo
-                        →</a>
+            <div id="promoContainer" style="transition: all 0.3s ease; overflow:hidden;">
+                <div class="mega-banners-grid">
+                    <!-- Banner Principal -->
+                    <div class="mega-banner mega-banner--main fade-in">
+                        <div class="mega-banner__content">
+                            <span class="mega-banner__tag">NUEVA TEMPORADA</span>
+                            <h2>Tus Ideas en<br>Alta Calidad</h2>
+                            <p>Gorras, libretas, camisetas y gigantografías creadas a tu medida.</p>
+                            <button class="btn"
+                                style="background:#111; color:#fff; border:none; margin-top:var(--sp-2);">Empezar a
+                                Crear</button>
+                        </div>
+                    </div>
+                    <!-- Banners Secundarios -->
+                    <div class="mega-banner mega-banner--sub1 fade-in" data-delay="100">
+                        <div class="mega-banner__content">
+                            <h3>Envíos Seguros 🚛</h3>
+                            <p>Trabajamos a nivel nacional para que tu marca llegue a todos lados.</p>
+                        </div>
+                    </div>
+                    <div class="mega-banner mega-banner--sub2 fade-in" data-delay="200">
+                        <div class="mega-banner__content">
+                            <h3>Descuentos Corporativos 🏢</h3>
+                            <p>Cotiza por mayor para tu empresa y obtén precios especiales en regalos y papelería.</p>
+                            <a href="calculadora.html"
+                                style="color:#111; font-weight:700; text-decoration:underline;">Ir a
+                                Calculadora →</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="product-grid" id="trendingProducts">
-                    <!-- Tendencias se inyectan acá -->
-                </div>
-            </div>
 
-            <!-- New Arrivals -->
-            <div class="trending-section fade-in" data-delay="400" style="margin-top:var(--sp-12);">
-                <div
-                    style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--color-border); padding-bottom:var(--sp-4); margin-bottom:var(--sp-6);">
-                    <h3 class="trending-title" style="margin:0;"><i class="fa-solid fa-star" style="color:#06b6d4;"></i>
-                        Lo Más Nuevo</h3>
+                <!-- Trending / Ofertas Flash -->
+                <div class="trending-section fade-in" data-delay="300" style="margin-top:var(--sp-12);">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--color-border); padding-bottom:var(--sp-4); margin-bottom:var(--sp-6);">
+                        <h3 class="trending-title" style="margin:0;"><i class="fa-solid fa-bolt"
+                                style="color:var(--color-accent);"></i> Ofertas Flash</h3>
+                        <a href="#" style="color:var(--color-secondary); font-size:var(--fs-sm); font-weight:600;">Ver
+                            Todo
+                            →</a>
+                    </div>
+                    <div class="product-grid" id="trendingProducts">
+                        <!-- Tendencias se inyectan acá -->
+                    </div>
                 </div>
-                <div class="product-grid" id="newProducts">
-                    <!-- Nuevos productos se inyectan acá -->
+
+                <!-- New Arrivals -->
+                <div class="trending-section fade-in" data-delay="400" style="margin-top:var(--sp-12);">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--color-border); padding-bottom:var(--sp-4); margin-bottom:var(--sp-6);">
+                        <h3 class="trending-title" style="margin:0;"><i class="fa-solid fa-star"
+                                style="color:#06b6d4;"></i>
+                            Lo Más Nuevo</h3>
+                    </div>
+                    <div class="product-grid" id="newProducts">
+                        <!-- Nuevos productos se inyectan acá -->
+                    </div>
+                </div>
+
+                <!-- Populares -->
+                <div class="trending-section fade-in" data-delay="500" style="margin-top:var(--sp-12);">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--color-border); padding-bottom:var(--sp-4); margin-bottom:var(--sp-6);">
+                        <h3 class="trending-title" style="margin:0;"><i class="fa-solid fa-fire"
+                                style="color:#ef4444;"></i>
+                            Lo Más Popular</h3>
+                    </div>
+                    <div class="product-grid" id="popularProducts">
+                        <!-- Populares se inyectan acá -->
+                    </div>
+                </div>
+
+                <!-- Promociones Especiales -->
+                <div class="trending-section fade-in" data-delay="600" style="margin-top:var(--sp-12);">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid var(--color-border); padding-bottom:var(--sp-4); margin-bottom:var(--sp-6);">
+                        <h3 class="trending-title" style="margin:0;"><i class="fa-solid fa-gift"
+                                style="color:#22c55e;"></i>
+                            Promociones Especiales</h3>
+                    </div>
+                    <div class="product-grid" id="promoProducts">
+                        <!-- Promociones se inyectan acá -->
+                    </div>
                 </div>
             </div>
+        </div> <!-- Cierre promoContainer -->
         </div>
     </section>
 
     <!-- Contenido: categorías + grid -->
     <section style="padding:0 0 var(--sp-16);" id="mainStoreCatalog">
-        <div class="container reveal reveal--slide-up" data-delay="100">
+        <div class="container">
             <div class="store-layout">
                 <!-- Sidebar categorías -->
                 <aside class="store-sidebar fade-in" id="categorySidebar">
@@ -149,14 +207,98 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/carrito.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/menu.js"></script>
-    <script src="js/tienda.js"></script>
-    <script src="js/animations.js"></script>
+    <!-- Modal Variante y Stock -->
+    <div id="variantModal" class="modal-overlay"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; display:flex; align-items:center; justify-content:center; padding:var(--sp-4);">
+        <div class="auth-card fade-in" style="max-width:400px; width:100%; position:relative;">
+            <button id="closeVariantModal"
+                style="position:absolute; top:16px; right:16px; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--color-text-dim);">&times;</button>
+            <div style="display:flex; gap:var(--sp-4); margin-bottom:var(--sp-4); align-items:center;">
+                <img id="varModalImg" src="" alt="Producto"
+                    style="width:80px; height:80px; object-fit:cover; border-radius:var(--radius-sm);">
+                <div>
+                    <h3 id="varModalName"
+                        style="margin:0; font-size:var(--fs-md); color:var(--color-heading); line-height:1.2;">Producto
+                    </h3>
+                    <div id="varModalPrice" style="color:var(--color-accent); font-weight:800; margin-top:4px;">$0.00
+                    </div>
+                </div>
+            </div>
+
+            <div id="varColorGroup" style="display:none; margin-bottom:var(--sp-4);">
+                <label style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:var(--sp-2);">🎨
+                    Elige un Color:</label>
+                <div id="varColorOptions" style="display:flex; flex-wrap:wrap; gap:var(--sp-2);"></div>
+            </div>
+
+            <div id="varSizeGroup" style="display:none; margin-bottom:var(--sp-4);">
+                <label style="display:block; font-size:var(--fs-sm); font-weight:700; margin-bottom:var(--sp-2);">📏
+                    Elige una Talla:</label>
+                <div id="varSizeOptions" style="display:flex; flex-wrap:wrap; gap:var(--sp-2);"></div>
+            </div>
+
+            <p id="varStockMsg"
+                style="font-size:var(--fs-sm); color:var(--color-text-dim); margin-bottom:var(--sp-4); text-align:center;">
+            </p>
+
+            <!-- Variante Modal -->
+            <div class="modal variant-modal" id="variantModal" style="display:none;">
+                <div class="modal__content fade-in">
+                    <h2 class="modal__title" id="vmTitle">Selecciona tus opciones</h2>
+
+                    <div id="vmColorGroup" class="variant-group" style="display:none;">
+                        <label>Color:</label>
+                        <div class="variant-options" id="vmColorList"></div>
+                    </div>
+
+                    <div id="vmSizeGroup" class="variant-group" style="display:none;">
+                        <label>Talla / Formato:</label>
+                        <div class="variant-options" id="vmSizeList"></div>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:var(--sp-3); margin-top:var(--sp-6);">
+                        <button class="btn btn--outline" id="btnCancelVariant">Cancelar</button>
+                        <button class="btn btn--primary" id="btnConfirmVariant" disabled>Agregar <i
+                                class="fa-solid fa-check"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+            <script src="js/supabase.js"></script>
+            <script src="js/api.js"></script>
+            <script src="js/geo.js"></script>
+            <script src="js/carrito.js"></script>
+            <script src="js/auth.js"></script>
+            <script src="js/menu.js"></script>
+            <script src="js/tienda.js"></script>
+            <script src="js/animations.js"></script>
+            <script>
+                // --- Geolocation Discount Logic ---
+                document.addEventListener('DOMContentLoaded', async () => {
+                    try {
+                        // Request location silently (will use cache if recently requested)
+                        const location = await GeoLoc.getLocation(false);
+                        if (location && location.state) {
+                            const provincia = location.state;
+                            // Check if it's Pichincha or Guayas to show a promo
+                            const targetProvinces = ['Pichincha', 'Guayas'];
+                            const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                            const nProvincia = normalize(provincia);
+
+                            const isTarget = targetProvinces.some(p => normalize(p) === nProvincia);
+
+                            if (isTarget) {
+                                document.getElementById('geoCityName').textContent = location.city || provincia;
+                                document.getElementById('geoPromoCode').textContent = `${provincia.toUpperCase().replace(/\s/g, '').substring(0, 4)}VIP`;
+                                document.getElementById('geoDiscountBanner').style.display = 'block';
+                            }
+                        }
+                    } catch (e) {
+                        console.log('Geolocalización no disponible o denegada.', e);
+                    }
+                });
+            </script>
 </body>
 
 </html>

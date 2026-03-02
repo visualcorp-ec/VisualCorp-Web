@@ -59,6 +59,25 @@
                 topProductQty = topProducts[0][1];
             }
 
+            // --- Generate Data for Charts ---
+            const dailySales = {};
+            orders.forEach(o => {
+                if (o.estado !== 'cancelado') {
+                    const dateStr = new Date(o.created_at).toLocaleDateString('es-EC');
+                    dailySales[dateStr] = (dailySales[dateStr] || 0) + (Number(o.total) || 0);
+                }
+            });
+
+            // Sort dates chronologically
+            const sortedDates = Object.keys(dailySales).sort((a, b) => {
+                const [d1, m1, y1] = a.split('/');
+                const [d2, m2, y2] = b.split('/');
+                return new Date(`${y1}-${m1}-${d1}`) - new Date(`${y2}-${m2}-${d2}`);
+            });
+
+            const salesLabels = sortedDates.slice(-10); // Last 10 days
+            const salesData = salesLabels.map(d => dailySales[d]);
+
             // --- Render metrics ---
             document.getElementById('statVentas').textContent = `$${totalVentas.toFixed(2)}`;
             document.getElementById('statPedidos').textContent = totalPedidos;
@@ -90,6 +109,82 @@
                         </div>`;
                     }).join('');
                 }
+            }
+
+            // --- Render Charts (Chart.js) ---
+            const ctxVentas = document.getElementById('ventasChart');
+            if (ctxVentas && window.Chart) {
+                new Chart(ctxVentas, {
+                    type: 'line',
+                    data: {
+                        labels: salesLabels.length > 0 ? salesLabels : ['Sin datos'],
+                        datasets: [{
+                            label: 'Ingresos Diarios ($)',
+                            data: salesData.length > 0 ? salesData : [0],
+                            borderColor: '#f2b705',
+                            backgroundColor: 'rgba(242, 183, 5, 0.2)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                ticks: { color: '#8b9bb4' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#8b9bb4' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const ctxTop = document.getElementById('topProductosChart');
+            if (ctxTop && window.Chart) {
+                new Chart(ctxTop, {
+                    type: 'doughnut',
+                    data: {
+                        labels: topProducts.length > 0 ? topProducts.map(p => p[0]) : ['Sin datos'],
+                        datasets: [{
+                            data: topProducts.length > 0 ? topProducts.map(p => p[1]) : [1],
+                            backgroundColor: ['#f2b705', '#f59e0b', '#06b6d4', '#ef4444', '#22c55e'],
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { color: '#8b9bb4', font: { size: 12 } }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            }
+
+            // --- Export Logic ---
+            const btnExport = document.getElementById('btnExportStats');
+            if (btnExport) {
+                btnExport.addEventListener('click', () => {
+                    alert('Imprimiendo Reporte de Ventas. Puedes guardarlo como PDF desde la ventana de impresión.');
+                    window.print();
+                });
             }
 
             // --- Advisor Performance ---

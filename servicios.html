@@ -7,7 +7,8 @@
     <title>Servicios — VisualCorp</title>
     <meta name="description"
         content="Conoce los servicios de VisualCorp: impresión de gran formato, diseño gráfico, personalización de productos y más.">
-    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmSKnD00M-kkEpOeoGxEL9UP7_Zfgf8Ug33Q&s">
+    <link rel="icon"
+        href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmSKnD00M-kkEpOeoGxEL9UP7_Zfgf8Ug33Q&s">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/estilos.css">
 </head>
@@ -30,68 +31,8 @@
 
     <!-- Grilla de Servicios -->
     <div class="container reveal reveal--slide-up" data-delay="100">
-        <div class="services-grid">
-
-            <!-- 1 — Impresión Gran Formato -->
-            <div class="service-card fade-in fade-in-delay-1">
-                <div class="service-card__icon">🖨️</div>
-                <h3 class="service-card__title">Impresión Gran Formato</h3>
-                <p class="service-card__text">
-                    Banners, vinilos, lonas y más en alta resolución. Materiales resistentes para interiores y
-                    exteriores con acabados profesionales.
-                </p>
-            </div>
-
-            <!-- 2 — Diseño Gráfico -->
-            <div class="service-card fade-in fade-in-delay-2">
-                <div class="service-card__icon">🎨</div>
-                <h3 class="service-card__title">Diseño Gráfico</h3>
-                <p class="service-card__text">
-                    Creamos piezas visuales impactantes: logotipos, papelería corporativa, material publicitario y
-                    branding completo para tu marca.
-                </p>
-            </div>
-
-            <!-- 3 — Productos Personalizados -->
-            <div class="service-card fade-in fade-in-delay-3">
-                <div class="service-card__icon">🎁</div>
-                <h3 class="service-card__title">Productos Personalizados</h3>
-                <p class="service-card__text">
-                    Tazas, camisetas, libretas, llaveros y cientos de artículos con tu marca o diseño. Ideales para
-                    eventos, regalos corporativos y merchandising.
-                </p>
-            </div>
-
-            <!-- 4 — Souvenirs -->
-            <div class="service-card fade-in fade-in-delay-4">
-                <div class="service-card__icon">🏷️</div>
-                <h3 class="service-card__title">Souvenirs</h3>
-                <p class="service-card__text">
-                    Recuerdos personalizados para cualquier ocasión: bodas, graduaciones, cumpleaños y eventos
-                    corporativos con diseños únicos.
-                </p>
-            </div>
-
-            <!-- 5 — Señalética -->
-            <div class="service-card fade-in fade-in-delay-1">
-                <div class="service-card__icon">🪧</div>
-                <h3 class="service-card__title">Señalética</h3>
-                <p class="service-card__text">
-                    Señalización interior y exterior: placas, carteles informativos, directorios y señales de seguridad
-                    con materiales duraderos.
-                </p>
-            </div>
-
-            <!-- 6 — Asesoría Integral -->
-            <div class="service-card fade-in fade-in-delay-2">
-                <div class="service-card__icon">💡</div>
-                <h3 class="service-card__title">Asesoría Integral</h3>
-                <p class="service-card__text">
-                    Te acompañamos desde la idea hasta el producto final. Nuestro equipo te asesora en materiales,
-                    formatos y cantidades óptimas.
-                </p>
-            </div>
-
+        <div class="product-grid" id="servicesDynamicGrid" style="margin-top:var(--sp-8);">
+            <!-- Skeletons o Servicios desde Supabase -->
         </div>
     </div>
 
@@ -124,6 +65,7 @@
     <script src="js/auth.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/animations.js"></script>
+    <script src="js/servicios.js"></script>
 </body>
 
 </html>

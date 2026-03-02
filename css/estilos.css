@@ -75,29 +75,29 @@
   --duration: .3s;
 }
 
-/* --- Light Mode Properties --- */
+/* --- Light Mode Properties (Allbirds clean style) --- */
 .light-mode {
-  --color-bg: #f8fafc;
+  --color-bg: #fdfdfd;
   --color-bg-alt: #ffffff;
   --color-surface: #ffffff;
-  --color-surface-alt: #f1f5f9;
-  --color-border: rgba(0, 0, 0, .1);
-  --color-border-hover: rgba(0, 0, 0, .2);
+  --color-surface-alt: #f3f4f6;
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
 
-  --color-text: #334155;
-  --color-text-muted: #64748b;
+  --color-text: #1e293b;
+  --color-text-muted: #475569;
   --color-text-dim: #94a3b8;
   --color-heading: #0f172a;
 
   --color-accent: #f59e0b;
   --color-accent-hover: #d97706;
-  --color-accent-glow: rgba(245, 158, 11, .25);
+  --color-accent-glow: rgba(245, 158, 11, .15);
 
   --gradient-brand: linear-gradient(135deg, #f59e0b, #fbbf24);
-  --gradient-card: linear-gradient(160deg, rgba(245, 158, 11, .05), rgba(6, 182, 212, .03));
-  --gradient-hero: linear-gradient(135deg, rgba(245, 158, 11, .08) 0%, transparent 50%, rgba(6, 182, 212, .05) 100%);
+  --gradient-card: linear-gradient(160deg, #ffffff, #f8fafc);
+  --gradient-hero: linear-gradient(135deg, rgba(245, 158, 11, .05) 0%, transparent 50%, rgba(6, 182, 212, .03) 100%);
 
-  --shadow-glow: 0 0 30px rgba(245, 158, 11, .15);
+  --shadow-glow: 0 0 40px rgba(0, 0, 0, .03);
 }
 
 /* --- Reset & Base --- */
@@ -2178,57 +2178,120 @@ body.light .site-header {
 }
 
 /* ========================================
-   AUTH PAGE
+   AUTH PAGE (GLASSMORPHISM)
    ======================================== */
 .auth-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
+  min-height: 100vh;
   padding: var(--sp-8);
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 15% 50%, rgba(242, 183, 5, 0.08), transparent 35%),
+    radial-gradient(circle at 85% 30%, rgba(6, 182, 212, 0.08), transparent 35%);
+}
+
+/* Ambient floating orbs for glass effect background */
+.auth-page::before,
+.auth-page::after {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: -1;
+  animation: floatOrb 10s infinite ease-in-out alternate;
+}
+
+.auth-page::before {
+  background: rgba(242, 183, 5, 0.05);
+  /* Brand Gold */
+  top: -10%;
+  left: -10%;
+}
+
+.auth-page::after {
+  background: rgba(6, 182, 212, 0.05);
+  /* Cyan */
+  bottom: -10%;
+  right: -10%;
+  animation-delay: -5s;
+}
+
+@keyframes floatOrb {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+
+  100% {
+    transform: translateY(50px) scale(1.1);
+  }
 }
 
 .auth-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: rgba(20, 24, 36, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-2xl);
-  padding: var(--sp-8);
+  padding: var(--sp-10) var(--sp-8);
   width: 100%;
-  max-width: 440px;
-  box-shadow: var(--shadow-lg);
+  max-width: 420px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+/* Subtle glowing border top for auth card */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(242, 183, 5, 0.5), transparent);
+  opacity: 0.6;
 }
 
 .auth-logo {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--sp-3);
-  margin-bottom: var(--sp-6);
+  margin-bottom: var(--sp-8);
 }
 
 .auth-logo img {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  border: 2px solid var(--color-accent);
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(242, 183, 5, 0.15);
 }
 
 .auth-logo h2 {
   font-size: var(--fs-xl);
+  font-weight: 800;
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .auth-tabs {
   display: flex;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  margin-bottom: var(--sp-6);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  margin-bottom: var(--sp-8);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .auth-tab {
   flex: 1;
-  padding: var(--sp-3);
+  padding: var(--sp-2) var(--sp-4);
   background: transparent;
   border: none;
   color: var(--color-text-muted);
@@ -2236,60 +2299,105 @@ body.light .site-header {
   font-weight: 600;
   font-size: var(--fs-sm);
   cursor: pointer;
-  transition: all var(--duration);
+  border-radius: var(--radius-full);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .auth-tab.active {
-  background: rgba(242, 183, 5, .12);
-  color: var(--color-accent);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .auth-form .form-group {
-  margin-bottom: var(--sp-4);
+  margin-bottom: var(--sp-5);
+  position: relative;
 }
 
 .auth-form label {
   display: block;
   margin-bottom: var(--sp-2);
-  font-weight: 600;
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
+  font-weight: 500;
+  font-size: var(--fs-xs);
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .auth-form label i {
   margin-right: var(--sp-1);
-  color: var(--color-accent);
+  color: var(--color-text-muted);
+  font-size: 0.9em;
+}
+
+/* Glass inputs */
+.auth-form input {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  transition: all 0.3s ease;
+}
+
+.auth-form input:focus {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-color: rgba(242, 183, 5, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(242, 183, 5, 0.1) !important;
 }
 
 .auth-submit {
   width: 100%;
-  margin-top: var(--sp-4);
+  margin-top: var(--sp-2);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-3);
+  font-size: var(--fs-base);
+  letter-spacing: 0.01em;
+  background: linear-gradient(135deg, var(--color-accent), #f59e0b);
+  border: none;
+  box-shadow: 0 4px 15px rgba(242, 183, 5, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
+.auth-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(242, 183, 5, 0.35);
+}
+
+/* Elegant alert boxes */
 .auth-error {
-  background: rgba(239, 68, 68, .12);
-  border: 1px solid rgba(239, 68, 68, .3);
-  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid #ef4444;
+  color: #fca5a5;
   padding: var(--sp-3) var(--sp-4);
-  border-radius: var(--radius-md);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 500;
+  margin-bottom: var(--sp-4);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  backdrop-filter: blur(4px);
 }
 
 .auth-success {
-  background: rgba(34, 197, 94, .12);
-  border: 1px solid rgba(34, 197, 94, .3);
-  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  border-left: 3px solid #22c55e;
+  color: #86efac;
   padding: var(--sp-3) var(--sp-4);
-  border-radius: var(--radius-md);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 500;
+  margin-bottom: var(--sp-4);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  backdrop-filter: blur(4px);
 }
 
 .auth-footer-text {
   text-align: center;
-  font-size: var(--fs-xs);
-  color: var(--color-text-dim);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
   margin-top: var(--sp-6);
   margin-bottom: 0;
 }
@@ -2861,4 +2969,33 @@ body.light .site-header {
   color: var(--color-text-dim);
   font-size: var(--fs-sm);
   margin-bottom: 0;
+}
+
+/* --- Compact Product Card (Fase 3 Promos) --- */
+.product-card--compact {
+  padding: var(--sp-2) !important;
+  gap: var(--sp-2) !important;
+}
+
+.product-card--compact .product-card__img {
+  height: 140px;
+}
+
+.product-card--compact .product-card__body {
+  padding: var(--sp-2) 0 0 0;
+}
+
+.product-card--compact .product-card__name {
+  font-size: var(--fs-sm);
+  margin-bottom: 2px;
+}
+
+.product-card--compact .product-card__price {
+  font-size: var(--fs-md);
+}
+
+.product-card--compact .btn-add-cart {
+  width: 30px;
+  height: 30px;
+  font-size: .8rem;
 }

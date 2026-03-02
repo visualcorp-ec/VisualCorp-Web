@@ -448,15 +448,9 @@
         // Build WhatsApp message
         const waText = buildFullWhatsAppText(nombre, telefono, email, notas, total);
 
-        if (selectedMethod === 'whatsapp') {
-            const advisor = getAssignedAdvisor();
-            const waNumber = advisor?.whatsapp || '593997078212';
-            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(waText)}`, '_blank');
-            showConfirmation(`Tu pedido fue enviado por WhatsApp a ${advisor?.nombre || 'un asesor'}. Te responderá pronto.`);
-            return;
-        }
+        let savedOrder = null;
 
-        // Try to save to database
+        // Try to save to database ALWAYs
         try {
             const isLoggedIn = typeof Auth !== 'undefined' && Auth.isLoggedIn();
 
@@ -505,16 +499,43 @@
 
             await supabaseClient.from('orden_items').insert(orderItems);
 
-            // Also send to WhatsApp for notification
-            window.open(`https://wa.me/593997078212?text=${encodeURIComponent(waText)}`, '_blank');
+            // Deduct Stock
+            const stockUpdates = items
+                .filter(item => item.control_stock && item.id)
+                .map(item => {
+                    const newStock = Math.max(0, item.stock - item.cantidad);
+                    return supabaseClient
+                        .from('productos')
+                        .update({ stock: newStock })
+                        .eq('id', item.id);
+                });
 
-            showConfirmation(`Orden #${order.id.substring(0, 8)} registrada. Se envió el resumen a WhatsApp.`);
+            if (stockUpdates.length > 0) {
+                await Promise.allSettled(stockUpdates);
+            }
+
+            savedOrder = order;
 
         } catch (err) {
-            console.error('Error saving order:', err);
-            // Fallback: send to WhatsApp
-            window.open(`https://wa.me/593997078212?text=${encodeURIComponent(waText)}`, '_blank');
-            showConfirmation('Tu pedido fue enviado por WhatsApp (no se pudo guardar en la base de datos).');
+            console.error('Error saving order or deducting stock:', err);
+        }
+
+        // Redirect / Confirmation Logic
+        if (selectedMethod === 'whatsapp') {
+            const advisor = getAssignedAdvisor();
+            const waNumber = advisor?.whatsapp || '593997078212';
+            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(waText)}`, '_blank');
+            showConfirmation(`Tu pedido fue enviado por WhatsApp a ${advisor?.nombre || 'un asesor'}. Te responderá pronto.`);
+        } else {
+            // Default success for transfer/paypal (or fallback)
+            if (savedOrder) {
+                // Notificar por whatsapp tmbn
+                window.open(`https://wa.me/593997078212?text=${encodeURIComponent(waText)}`, '_blank');
+                showConfirmation(`Orden #${savedOrder.id.substring(0, 8)} registrada. Se envió el resumen a WhatsApp.`);
+            } else {
+                window.open(`https://wa.me/593997078212?text=${encodeURIComponent(waText)}`, '_blank');
+                showConfirmation('Tu pedido fue enviado por WhatsApp (no se pudo guardar en la base de datos).');
+            }
         }
     }
 
@@ -564,6 +585,10 @@
         });
     }
 
+    // --- Configuration Logic ---
+    let locationValidated = false;
+    let installationBlocked = false;
+
     // --- Wire up buttons ---
     document.getElementById('btnToStep2')?.addEventListener('click', () => {
         collectCustomizations();
@@ -571,6 +596,38 @@
         document.getElementById('step2').style.display = '';
         updateSteps(2);
         fillUserData();
+
+        // Asynchronously check Geolocation
+        if (typeof GeoLoc !== 'undefined' && !locationValidated) {
+            GeoLoc.getLocation(false).then(loc => {
+                locationValidated = true;
+                const alertDiv = document.getElementById('geoCoverageAlert');
+                if (!alertDiv) return;
+
+                if (loc && loc.state && loc.country) {
+                    const hasCoverage = GeoLoc.hasCoverage(loc.state, loc.country);
+
+                    if (hasCoverage) {
+                        alertDiv.innerHTML = `<div class="auth-success" style="padding:var(--sp-2) var(--sp-3); font-size:var(--fs-xs);">
+                            📍 Ubicación detectada (${loc.city}, ${loc.state}). <strong>Sí contamos con cobertura para instalación en tu zona.</strong>
+                        </div>`;
+                        alertDiv.style.display = 'block';
+                    } else {
+                        // Check if any product needs installation inherently
+                        const requiresInstall = items.some(i => ['lona', 'vinil', 'letrero', 'gigantografía'].some(k => i.nombre.toLowerCase().includes(k)));
+
+                        if (requiresInstall) {
+                            installationBlocked = true;
+                            alertDiv.innerHTML = `<div class="auth-error" style="padding:var(--sp-2) var(--sp-3); font-size:var(--fs-xs);">
+                                ⚠️ Ubicación detectada: ${loc.country === 'Ecuador' ? loc.state : loc.country}. 
+                                <strong>Actualmente solo ofrecemos instalación en Costa y Sierra de Ecuador.</strong> Puedes comprar el producto sin instalación.
+                            </div>`;
+                            alertDiv.style.display = 'block';
+                        }
+                    }
+                }
+            }).catch(e => console.log('Location not available.'));
+        }
     });
 
     document.getElementById('btnBackTo1')?.addEventListener('click', () => {
@@ -586,6 +643,12 @@
             alert('Por favor ingresa tu nombre y teléfono.');
             return;
         }
+
+        if (installationBlocked) {
+            const accept = confirm("Tu ubicación no cuenta con cobertura de instalación, por lo que enviaremos solo el producto terminado por correspondencia. ¿Deseas continuar?");
+            if (!accept) return;
+        }
+
         document.getElementById('step2').style.display = 'none';
         document.getElementById('step3').style.display = '';
         updateSteps(3);

@@ -18,12 +18,15 @@ const Carrito = (function () {
 
     function addItem(producto) {
         const items = getItems();
-        const existing = items.find(i => i.id === producto.id);
+        const cart_id = producto.id + (producto.variantes && producto.variantes.seleccion ? '-' + producto.variantes.seleccion : '');
+
+        const existing = items.find(i => i.cart_id === cart_id);
         if (existing) {
             existing.cantidad += (producto.cantidad || 1);
             recalculatePrice(existing);
         } else {
             items.push({
+                cart_id: cart_id,
                 id: producto.id,
                 nombre: producto.nombre,
                 codigo: producto.codigo || '',
@@ -31,7 +34,10 @@ const Carrito = (function () {
                 cantidad: producto.cantidad || 1,
                 imagen: producto.imagen || '',
                 subcategoria: producto.subcategoria || '',
-                escalas_precios: producto.escalas_precios || []
+                escalas_precios: producto.escalas_precios || [],
+                variantes: producto.variantes || null,
+                control_stock: producto.control_stock || false,
+                stock: producto.stock || 0
             });
             const newItem = items[items.length - 1];
             recalculatePrice(newItem);
@@ -40,15 +46,16 @@ const Carrito = (function () {
         showToast(`✅ ${producto.nombre} agregado al carrito`);
     }
 
-    function removeItem(id) {
-        const items = getItems().filter(i => i.id !== id);
+    function removeItem(cart_id) {
+        const items = getItems().filter(i => i.cart_id !== cart_id);
         saveItems(items);
     }
 
-    function updateQuantity(id, qty) {
+    function updateQuantity(cart_id, qty) {
         const items = getItems();
-        const item = items.find(i => i.id === id);
+        const item = items.find(i => i.cart_id === cart_id);
         if (item) {
+            if (item.control_stock && qty > item.stock) qty = item.stock;
             item.cantidad = Math.max(1, qty);
             recalculatePrice(item);
             saveItems(items);

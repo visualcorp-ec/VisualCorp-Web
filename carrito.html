@@ -98,21 +98,23 @@
             cartItems.innerHTML = items.map(item => {
                 const imgSrc = item.imagen || 'https://placehold.co/80x80/1a2035/f2b705?text=📦';
                 const subtotal = (item.precio * item.cantidad).toFixed(2);
+                const variantText = item.variantes && item.variantes.seleccion ? `<span style="display:block; font-size:var(--fs-xs); color:var(--color-accent); font-weight:700;">${item.variantes.seleccion}</span>` : '';
                 return `
-          <div class="cart-item" data-id="${item.id}">
+          <div class="cart-item" data-id="${item.cart_id}">
             <img src="${imgSrc}" alt="${item.nombre}" class="cart-item__img">
             <div class="cart-item__info">
               <h4 class="cart-item__name">${item.nombre}</h4>
               <span class="cart-item__sub">${item.subcategoria || ''}</span>
+              ${variantText}
               <span class="cart-item__price">$${Number(item.precio).toFixed(2)} c/u</span>
             </div>
             <div class="cart-item__qty">
-              <button class="qty-btn" data-action="minus" data-id="${item.id}">−</button>
+              <button class="qty-btn" data-action="minus" data-id="${item.cart_id}">−</button>
               <span class="qty-val">${item.cantidad}</span>
-              <button class="qty-btn" data-action="plus" data-id="${item.id}">+</button>
+              <button class="qty-btn" data-action="plus" data-id="${item.cart_id}">+</button>
             </div>
             <div class="cart-item__total">$${subtotal}</div>
-            <button class="cart-item__remove" data-id="${item.id}" title="Eliminar">
+            <button class="cart-item__remove" data-id="${item.cart_id}" title="Eliminar">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>`;
@@ -132,12 +134,12 @@
             // Events
             cartItems.querySelectorAll('.qty-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const id = btn.dataset.id;
+                    const cart_id = btn.dataset.id;
                     const action = btn.dataset.action;
-                    const item = Carrito.getItems().find(i => i.id === id);
+                    const item = Carrito.getItems().find(i => i.cart_id === cart_id);
                     if (!item) return;
                     const newQty = action === 'plus' ? item.cantidad + 1 : item.cantidad - 1;
-                    if (newQty < 1) { Carrito.removeItem(id); } else { Carrito.updateQuantity(id, newQty); }
+                    if (newQty < 1) { Carrito.removeItem(cart_id); } else { Carrito.updateQuantity(cart_id, newQty); }
                     renderCart();
                     Carrito.updateBadge();
                 });
@@ -155,7 +157,8 @@
         function buildWhatsAppText(items, total) {
             let text = '🛒 *PEDIDO — VisualCorp*\n\n';
             items.forEach((item, i) => {
-                text += `${i + 1}. ${item.nombre} x${item.cantidad} — $${(item.precio * item.cantidad).toFixed(2)}\n`;
+                const varText = item.variantes && item.variantes.seleccion ? ` (${item.variantes.seleccion})` : '';
+                text += `${i + 1}. ${item.nombre}${varText} x${item.cantidad} — $${(item.precio * item.cantidad).toFixed(2)}\n`;
             });
             text += `\n💰 *Total: $${total.toFixed(2)}*\n`;
             text += `\n📝 (Agregar detalles adicionales aquí)`;

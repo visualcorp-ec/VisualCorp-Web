@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisualCorp — POS (Punto de Venta)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/estilos.css">
+    <style>
+        /* Modern POS Specific Styles */
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--color-bg);
+        }
+
+        .pos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--sp-3) var(--sp-6);
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            z-index: 100;
+        }
+
+        .pos-main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            height: calc(100vh - 65px);
+        }
+
+        /* Left Side: Catalog */
+        .pos-catalog {
+            flex: 1;
+            padding: var(--sp-4);
+            overflow-y: auto;
+            border-right: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-4);
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: var(--sp-4);
+        }
+
+        .pos-product {
+            background: var(--color-surface-alt);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: transform 0.1s;
+            overflow: hidden;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .pos-product:active {
+            transform: scale(0.97);
+        }
+
+        .pos-product__img {
+            height: 120px;
+            object-fit: cover;
+            width: 100%;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .pos-product__info {
+            padding: var(--sp-3);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .pos-product__title {
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: var(--sp-1);
+        }
+
+        .pos-product__price {
+            color: var(--color-accent);
+            font-weight: 800;
+        }
+
+        /* Right Side: Ticket/Cart */
+        .pos-ticket {
+            width: 400px;
+            background: var(--color-surface);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ticket-header {
+            padding: var(--sp-4);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-3);
+        }
+
+        .ticket-client {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: var(--sp-2) var(--sp-3);
+            border-radius: var(--radius-md);
+            font-size: var(--fs-sm);
+        }
+
+        .ticket-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--sp-4);
+        }
+
+        .ticket-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--sp-3) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ticket-item__name {
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .ticket-item__controls {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-2);
+        }
+
+        .qty-btn {
+            background: var(--color-surface-alt);
+            border: none;
+            color: #fff;
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        .ticket-footer {
+            padding: var(--sp-4);
+            border-top: 1px solid var(--color-border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .ticket-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--fs-xl);
+            font-weight: 800;
+            color: var(--color-accent);
+            margin-bottom: var(--sp-4);
+        }
+
+        .ticket-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--sp-2);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="pos-header">
+        <div style="font-size:var(--fs-lg); font-weight:800; display:flex; align-items:center; gap:var(--sp-2);">
+            <i class="fa-solid fa-cash-register" style="color:var(--color-accent)"></i> Punto de Venta
+        </div>
+        <div style="display:flex; gap:var(--sp-2);">
+            <button class="btn btn--outline" onclick="window.location.href='crm.html'">
+                <i class="fa-solid fa-layer-group"></i> Tablero CRM
+            </button>
+            <button class="btn btn--outline" onclick="window.location.href='index.html'">
+                <i class="fa-solid fa-house"></i> Admin
+            </button>
+        </div>
+    </header>
+
+    <main class="pos-main">
+        <!-- Catalog -->
+        <section class="pos-catalog">
+            <div style="display:flex; gap:var(--sp-3); margin-bottom:var(--sp-2);">
+                <div class="search-box" style="margin:0; flex:1;">
+                    <i class="fa-solid fa-magnifying-glass search-box__icon"></i>
+                    <input type="text" id="posSearch" placeholder="Buscar producto..." class="search-box__input">
+                </div>
+                <select id="posCategory" class="form-input" style="width:200px;">
+                    <option value="all">Todas las Categorías</option>
+                    <option value="impresion">Imprenta</option>
+                    <option value="personalizado">Personalizados</option>
+                </select>
+            </div>
+
+            <div class="catalog-grid" id="posGrid">
+                <!-- Products injected by JS -->
+            </div>
+        </section>
+
+        <!-- Ticket -->
+        <section class="pos-ticket">
+            <div class="ticket-header">
+                <div class="ticket-client" id="clientSelector" style="cursor:pointer;" onclick="selectClient()">
+                    <span><i class="fa-solid fa-user"></i> <span id="clientName">Cliente Local (Mostrador)</span></span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+
+            <div class="ticket-items" id="ticketList">
+                <div style="color:var(--color-text-dim); text-align:center; padding-top:var(--sp-8);">
+                    <i class="fa-solid fa-cart-arrow-down"
+                        style="font-size:2rem; opacity:0.3; margin-bottom:var(--sp-2);"></i><br>
+                    El carrito está vacío
+                </div>
+            </div>
+
+            <div class="ticket-footer">
+                <div class="ticket-total">
+                    <span>Total</span>
+                    <span id="posTotal">$0.00</span>
+                </div>
+                <div class="ticket-actions">
+                    <button class="btn btn--outline" id="btnProforma">
+                        <i class="fa-solid fa-file-pdf"></i> Proforma
+                    </button>
+                    <button class="btn btn--primary" id="btnCobrar">
+                        <i class="fa-solid fa-money-bill-wave"></i> Cobrar
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <!-- PDF Generation library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="js/pos.js"></script>
+</body>
+
+</html>
