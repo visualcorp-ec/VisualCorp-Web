@@ -206,8 +206,10 @@
                     nombre: p.nombre,
                     codigo: p.codigo,
                     precio: getMinPrice(p),
+                    cantidad: 1,
                     imagen: p.imagen_url || '',
-                    subcategoria: p.subcategoria
+                    subcategoria: p.subcategoria,
+                    escalas_precios: p.escalas_precios || []
                 });
             });
         });

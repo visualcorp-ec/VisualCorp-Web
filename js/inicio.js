@@ -299,10 +299,9 @@ function renderProducts(products, salesMap) {
             ${img}
             <div style="padding:var(--sp-4);">
                 <h4 style="margin:0 0 var(--sp-1) 0; color:var(--color-heading); font-size:var(--fs-base);">${p.nombre}</h4>
-                <p style="margin:0 0 var(--sp-2) 0; font-size:var(--fs-xs); color:var(--color-text-dim); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.descripcion || p.nombre}</p>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-weight:800; color:var(--color-accent); font-size:var(--fs-lg);">$${Number(p.pvp || p.precio || 0).toFixed(2)}</span>
-                    <a href="tienda.html" class="btn btn--primary" style="font-size:var(--fs-xs); padding:var(--sp-2) var(--sp-3);">Ver más</a>
+                <p style="margin:0 0 var(--sp-4) 0; font-size:var(--fs-xs); color:var(--color-text-dim); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.descripcion || p.nombre}</p>
+                <div style="display:flex; justify-content:center;">
+                    <a href="tienda.html" class="btn btn--primary" style="font-size:var(--fs-xs); padding:var(--sp-2) var(--sp-4); width:100%; text-align:center;">Cotizar / Ver Más</a>
                 </div>
             </div>
         </div>`;

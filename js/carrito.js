@@ -21,6 +21,7 @@ const Carrito = (function () {
         const existing = items.find(i => i.id === producto.id);
         if (existing) {
             existing.cantidad += (producto.cantidad || 1);
+            recalculatePrice(existing);
         } else {
             items.push({
                 id: producto.id,
@@ -29,8 +30,11 @@ const Carrito = (function () {
                 precio: producto.precio || 0,
                 cantidad: producto.cantidad || 1,
                 imagen: producto.imagen || '',
-                subcategoria: producto.subcategoria || ''
+                subcategoria: producto.subcategoria || '',
+                escalas_precios: producto.escalas_precios || []
             });
+            const newItem = items[items.length - 1];
+            recalculatePrice(newItem);
         }
         saveItems(items);
         showToast(`✅ ${producto.nombre} agregado al carrito`);
@@ -46,6 +50,7 @@ const Carrito = (function () {
         const item = items.find(i => i.id === id);
         if (item) {
             item.cantidad = Math.max(1, qty);
+            recalculatePrice(item);
             saveItems(items);
         }
     }
@@ -53,6 +58,20 @@ const Carrito = (function () {
     function clear() {
         localStorage.removeItem(KEY);
         updateBadge();
+    }
+
+    // Dynamic Pricing Logic Based on Scales
+    function recalculatePrice(item) {
+        if (!item.escalas_precios || item.escalas_precios.length === 0) return;
+        const prices = item.escalas_precios;
+        let finalPvp = prices[0].pvp; // highest base 
+        for (let i = prices.length - 1; i >= 0; i--) {
+            if (item.cantidad >= prices[i].qty) {
+                finalPvp = prices[i].pvp;
+                break;
+            }
+        }
+        item.precio = finalPvp;
     }
 
     function getTotal() {
