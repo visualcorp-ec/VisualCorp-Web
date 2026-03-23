@@ -43,17 +43,18 @@
                     <div class="total-grand"><span>TOTAL</span><span id="summaryTotal">$0.00</span></div>
 
                     <div style="margin-top:var(--sp-6); display:flex; flex-direction:column; gap:var(--sp-3);">
-                        <a href="https://wa.me/593997078212?text=Hola,%20quiero%20hacer%20un%20pedido" target="_blank"
-                            class="btn btn--primary btn--lg" id="btnWhatsApp" style="width:100%;">
-                            <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
-                        </a>
-                        <button class="btn btn--secondary" id="btnClear" style="width:100%;">
-                            <i class="fa-solid fa-trash"></i> Vaciar carrito
-                        </button>
                         <a href="pagar.html" class="btn btn--primary btn--lg"
-                            style="width:100%; text-align:center; margin-top:var(--sp-4);">
+                            style="width:100%; text-align:center;">
                             Proceder al Pago <i class="fa-solid fa-arrow-right" style="margin-left:var(--sp-2);"></i>
                         </a>
+                        <a href="https://wa.me/593997078212?text=Hola,%20quiero%20hacer%20un%20pedido" target="_blank"
+                            class="btn btn--outline" id="btnWhatsApp" style="width:100%;">
+                            <i class="fa-brands fa-whatsapp"></i> Pedir por WhatsApp
+                        </a>
+                        <div style="border-top:1px solid var(--color-border); margin-top:var(--sp-2); padding-top:var(--sp-2);"></div>
+                        <button class="btn--ghost-danger" id="btnClear">
+                            <i class="fa-solid fa-trash"></i> Vaciar carrito
+                        </button>
                     </div>
                 </aside>
             </div>
@@ -85,16 +86,16 @@
             if (items.length === 0) {
                 cartItems.innerHTML = `
           <div class="empty-state">
-            <div class="empty-state__icon">🛒</div>
+            <div class="empty-state__icon"><i class="fa-solid fa-cart-shopping" style="font-size:3rem; color:var(--color-accent);"></i></div>
             <div class="empty-state__title">Tu carrito está vacío</div>
-            <div class="empty-state__text">Agrega productos desde la <a href="tienda.html">tienda</a>.</div>
+            <div class="empty-state__text">Explora nuestros productos y encuentra lo que necesitas.</div>
+            <a href="tienda.html" class="btn btn--primary" style="margin-top:var(--sp-4);">Ir a la tienda</a>
           </div>`;
-                summaryCount.textContent = '0';
-                summarySubtotal.textContent = '$0.00';
-                summaryTotal.textContent = '$0.00';
+                document.getElementById('cartSummary').style.display = 'none';
                 return;
             }
 
+            document.getElementById('cartSummary').style.display = '';
             cartItems.innerHTML = items.map(item => {
                 const imgSrc = item.imagen || 'https://placehold.co/80x80/1a2035/f2b705?text=📦';
                 const subtotal = (item.precio * item.cantidad).toFixed(2);
@@ -166,6 +167,7 @@
         }
 
         btnClear.addEventListener('click', () => {
+            if (!confirm('¿Seguro que deseas vaciar el carrito?')) return;
             Carrito.clear();
             renderCart();
             Carrito.updateBadge();
